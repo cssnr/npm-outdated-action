@@ -60,7 +60,8 @@ Coming Soon...
 
 </details>
 
-At a minimum, you need to checkout the repository and run in repository root.
+At a minimum, you need to checkout the repository.
+The action will run a npm clean install if the `node_modules` directory is not present.
 
 ```yaml
 - name: 'Checkout'
@@ -68,9 +69,10 @@ At a minimum, you need to checkout the repository and run in repository root.
 
 - name: 'NPM Outdated Check'
   uses: cssnr/npm-outdated-action@master
+  continue-on-error: true
 ```
 
-The action will run a npm clean install if the `node_modules` directory is not present.
+Note: `continue-on-error: true` is used to prevent the workflow from failing if the action fails.
 
 You can view more [Examples](#Examples) below.
 
@@ -203,11 +205,12 @@ More Table Examples Coming Soon...
 ```
 
 </details>
-<details><summary>Custom Column Order</summary>
+<details open><summary>Custom Column Order</summary>
 
 ```yaml
 - name: 'Package Changelog Action'
   uses: cssnr/npm-outdated-action@master
+  continue-on-error: true
   with:
     columns: 'n,l,c,w,d'
 ```
