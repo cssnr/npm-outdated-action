@@ -29962,6 +29962,31 @@ class Pull {
     }
 
     /**
+     * Create Comment
+     * @param {string} body
+     * @return {Promise<object>}
+     */
+    async createComment(body) {
+        return await this.octokit.rest.issues.createComment({
+            ...this.repo,
+            issue_number: this.pull_request.number,
+            body,
+        })
+    }
+
+    /**
+     * Delete Comment
+     * @param {string} comment_id
+     * @return {Promise<object>}
+     */
+    async deleteComment(comment_id) {
+        return await this.octokit.rest.issues.deleteComment({
+            ...this.repo,
+            comment_id,
+        })
+    }
+
+    /**
      * Update Comment
      * @param {string} comment_id
      * @param {string} body
@@ -29971,19 +29996,6 @@ class Pull {
         return await this.octokit.rest.issues.updateComment({
             ...this.repo,
             comment_id,
-            body,
-        })
-    }
-
-    /**
-     * Create Comment
-     * @param {string} body
-     * @return {Promise<object>}
-     */
-    async createComment(body) {
-        return await this.octokit.rest.issues.createComment({
-            ...this.repo,
-            issue_number: this.pull_request.number,
             body,
         })
     }

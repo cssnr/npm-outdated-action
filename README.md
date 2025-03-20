@@ -57,10 +57,17 @@ Coming Soon...
 
 </details>
 
+At a minimum, you need to checkout the repository and run in repository root.
+
 ```yaml
+- name: 'Checkout'
+  uses: actions/checkout@v4
+
 - name: 'NPM Outdated Check'
   uses: cssnr/npm-outdated-action@master
 ```
+
+The action will run a npm clean install if the `node_modules` directory is not present.
 
 ### Permissions
 
@@ -113,6 +120,22 @@ const maps = {
 </details>
 
 ### Table Examples
+
+<details open><summary>🔷 View Basic Example</summary>
+
+<details open><summary>Click to Toggle Packages</summary>
+
+| Package&nbsp;Name                            | Current | Wanted | Latest |
+| :------------------------------------------- | :-----: | :----: | :----: |
+| [axios](https://www.npmjs.com/package/axios) |  1.8.3  | 1.8.4  |   -    |
+
+</details>
+
+Update packages with: `npm update --save`
+
+---
+
+</details>
 
 More Table Examples Coming Soon...
 
