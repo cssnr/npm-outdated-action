@@ -90,7 +90,7 @@ const maps = {
 
         const table = genTable(config, data)
         core.startGroup('Table Data')
-        console.log('table:\n', table)
+        console.log(table)
         core.endGroup() // Table Data
 
         const markdown = genMarkdown(config, table)
@@ -205,7 +205,6 @@ async function updatePull(config, data, markdown) {
  * @return {Promise<String>}
  */
 async function checkOutput(commandLine, args = [], options = {}) {
-    console.log('checkOutput')
     let myOutput = ''
     let myError = ''
     options.listeners = {
@@ -229,7 +228,6 @@ async function checkOutput(commandLine, args = [], options = {}) {
  * @return {String}
  */
 function genMarkdown(config, data) {
-    console.log('genMarkdown')
     let result = `${config.heading}\n\n`
     if (!data.length) {
         result += '✅ All packages have been updated.'
