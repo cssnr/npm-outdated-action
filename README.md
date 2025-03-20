@@ -37,8 +37,8 @@ You can customize the heading, column visibility, column order, and reporting on
 For more details see the [Table Examples](#Table-Examples).
 
 > [!NOTE]  
-> This action is under active development. Please
-> [request any features](https://github.com/cssnr/npm-outdated-action/discussions/categories/feature-requests)
+> This action is under active development.  
+> Please [request any features](https://github.com/cssnr/npm-outdated-action/discussions/categories/feature-requests)
 > you would like to see and [report any issues](https://github.com/cssnr/npm-outdated-action/issues) you find.
 
 ## Inputs
@@ -256,7 +256,10 @@ Breaking changes would result in a **Major** version bump. At a minimum you shou
 - Custom Column Titles
 - Custom Section Text
 
-Want to show package changes on release notes? Check out: [cssnr/package-changelog-action](https://github.com/cssnr/package-changelog-action)
+Want to show package changes on release notes? Check out: [cssnr/package-changelog-action](https://github.com/cssnr/package-changelog-action)  
+Want to automatically updated tags on release? Check out: [cssnr/update-version-tags-action](https://github.com/cssnr/update-version-tags-action)
+
+If you would like to see a new feature, please [submit a feature request](https://github.com/cssnr/npm-outdated-action/discussions/categories/feature-requests).
 
 # Support
 
