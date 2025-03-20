@@ -146,25 +146,7 @@ async function updatePull(config, data, markdown) {
     const octokit = github.getOctokit(config.token)
 
     // Step 1 - Check for Current Comment
-    let currentComment
-    if (github.context.payload.pull_request.comments) {
-        console.log('Getting PR Comments...')
-        const comments = await octokit.rest.issues.listComments({
-            ...github.context.repo,
-            issue_number: github.context.payload.pull_request.number,
-        })
-        // console.log('comments.data:', comments.data)
-        if (comments.data.length) {
-            for (const comment of comments.data) {
-                // console.log('comment:', comment)
-                if (comment.body.startsWith('<!-- npm-outdated-action')) {
-                    currentComment = comment
-                    break
-                }
-            }
-        }
-    }
-
+    let currentComment = await getComment(octokit, '<!-- npm-outdated-action')
     console.log('currentComment:', currentComment)
     if (!currentComment && !Object.entries(data).length) {
         console.log('No currentComment AND no outdated packages, skipping...')
@@ -205,6 +187,31 @@ async function updatePull(config, data, markdown) {
         // TODO: Add error handling
         console.log('response.status:', response.status)
         return response.status === 201
+    }
+}
+
+/**
+ * Get Comment by startString
+ * @param {InstanceType<typeof github.GitHub>} octokit
+ * @param {String} start
+ * @return {Promise<Object|undefined>}
+ */
+async function getComment(octokit, start) {
+    if (!github.context.payload.pull_request.comments || !start) {
+        return
+    }
+    const comments = await octokit.rest.issues.listComments({
+        ...github.context.repo,
+        issue_number: github.context.payload.pull_request.number,
+    })
+    // console.log('comments.data:', comments.data)
+    if (comments.data.length) {
+        for (const comment of comments.data) {
+            // console.log('comment:', comment)
+            if (comment.body.startsWith(start)) {
+                return comment
+            }
+        }
     }
 }
 
