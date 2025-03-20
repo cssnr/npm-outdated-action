@@ -28,13 +28,13 @@
 - [Support](#Support)
 - [Contributing](#Contributing)
 
-Action to report npm outdated packages on a pull request and comment with a table.
+Action to report npm outdated packages on a pull request and comment with a [customizable table](#Table-Options).
 
 This action will comment on a PR if packages are outdated. As packages are updated, the comment is updated.
 
 You can customize the heading, column visibility, column order, and reporting on wanted or latest.
 
-For more details see the [Table Examples](#Table-Examples).
+Check out the [Table Examples](#Table-Examples) to see more.
 
 > [!NOTE]  
 > This action is under active development.  
@@ -252,6 +252,7 @@ Breaking changes would result in a **Major** version bump. At a minimum you shou
 
 ### Planned
 
+- Option to Fail Job
 - Packages Exclude List
 - Custom Column Alignment
 - Custom Column Titles
