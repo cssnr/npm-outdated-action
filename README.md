@@ -135,7 +135,7 @@ Note: due to the way `${{}}` expressions are evaluated, multi-line output gets e
 
 More Output Examples Coming Soon...
 
-### Table Options
+## Table Options
 
 **latest:** To disable reporting of latest and ONLY show wanted, set this to `false`.
 
