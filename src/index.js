@@ -63,7 +63,9 @@ const maps = {
         console.log(data)
         core.endGroup() // Outdated Object
 
+        core.startGroup('Generate Table')
         const table = genTable(config, data)
+        core.endGroup() // Generate Table
         core.startGroup('Table Data')
         console.log(table)
         core.endGroup() // Table Data
@@ -211,8 +213,8 @@ function genMarkdown(config, data) {
     console.log('table:\n', table)
     const open = config.open ? ' open' : ''
     result +=
-        `<details${open}><summary>${config.toggle}</summary>\n\n` +
-        `Outdated Packages:\n\n${table}\n\n</details>\n`
+        `<details${open}><summary>${config.toggle}</summary>\n\n${table}\n\n</details>\n\n` +
+        'Update packages with: `npm update --save`'
     return result
 }
 
