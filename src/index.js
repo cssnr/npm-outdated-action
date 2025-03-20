@@ -269,7 +269,7 @@ async function addSummary(config, markdown, comment) {
             `PR Comment: ${github.context.payload.number}#issuecomment-${comment.id} \n\n`
         )
     } else {
-        console.log('PR Comment NOT Found!')
+        core.summary.addRaw('No PR Comment Found.\n\n')
     }
 
     core.summary.addRaw(`${markdown}\n\n---\n\n`)
