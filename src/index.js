@@ -104,8 +104,10 @@ const maps = {
             (github.context.payload.pull_request?.comments ||
                 Object.entries(data).length)
         ) {
+            core.startGroup(`Processing PR: ${github.context.payload.number}`)
             updated = await updatePull(config, data, markdown)
-            console.log('updated:', updated)
+            console.log('PR Updated:', updated)
+            core.endGroup() // Processing PR
         } else {
             console.log('Not PR AND (No Comments OR Outdated Packages)')
         }
@@ -254,7 +256,6 @@ function genMarkdown(config, data) {
  * @return {*[]}
  */
 function genTable(config, outdated) {
-    console.log('genTable')
     // TODO: Ensure order of returned data
     const results = []
     for (const [name, data] of Object.entries(outdated)) {
