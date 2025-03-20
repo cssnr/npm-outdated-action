@@ -73,17 +73,30 @@ const maps = {
         }
 
         const opts = { ignoreReturnCode: true }
+        core.startGroup('Running: npm outdated')
         const myOutput = await checkOutput('npm', ['outdated', '--json'], opts)
+        core.endGroup() // npm outdated
+
+        core.startGroup('Outdated JSON')
+        console.log(myOutput)
+        core.endGroup() //
         // const myOutput = json
-        console.log('myOutput:\n', myOutput)
 
         /** @type {{current: string, wanted: string, latest: string, dependent: string, location: string}} **/
         const data = JSON.parse(myOutput)
-        console.log('data:\n', data)
+        core.startGroup('Outdated Object')
+        console.log(data)
+        core.endGroup() // Outdated Object
+
         const table = genTable(config, data)
+        core.startGroup('Table Data')
         console.log('table:\n', table)
+        core.endGroup() // Table Data
+
         const markdown = genMarkdown(config, table)
-        console.log('markdown:\n', markdown)
+        core.startGroup('Markdown String')
+        console.log(markdown)
+        core.endGroup() // Markdown String
 
         let updated
         if (
