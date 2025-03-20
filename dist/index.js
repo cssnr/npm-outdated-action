@@ -32443,7 +32443,7 @@ const maps = {
         if (config.summary) {
             core.info('📝 Writing Job Summary')
             try {
-                await addSummary(config, markdown)
+                await addSummary(config, markdown, updated)
             } catch (e) {
                 console.log(e)
                 core.error(`Error writing Job Summary ${e.message}`)
@@ -32603,10 +32603,14 @@ function genTable(config, outdated) {
  * Add Summary
  * @param {Config} config
  * @param {String} markdown
+ * @param {Boolean} updated
  * @return {Promise<void>}
  */
-async function addSummary(config, markdown) {
+async function addSummary(config, markdown, updated) {
     core.summary.addRaw('## NPM Outdated Check\n\n')
+    if (updated) {
+        core.summary.addRaw(`PR Comment Updated.\n\n`)
+    }
     core.summary.addRaw(`${markdown}\n\n---\n\n`)
 
     delete config.token

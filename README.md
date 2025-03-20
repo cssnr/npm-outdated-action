@@ -97,7 +97,7 @@ Default value: `n,c,w,l`
 | `d` | Dependent    | Dependent Package |
 | `p` | Location     | Path of Package   |
 
-<details><summary>View the Column and Section Maps</summary>
+<details><summary>👀 View the Column Map</summary>
 
 ```javascript
 const maps = {
