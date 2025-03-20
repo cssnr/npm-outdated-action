@@ -97,6 +97,25 @@ Default value: `n,c,w,l`
 | `d` | Dependent    | Dependent Package |
 | `p` | Location     | Path of Package   |
 
+<details><summary>View the Column and Section Maps</summary>
+
+```javascript
+const maps = {
+  n: { align: 'l', col: 'Package&nbsp;Name' },
+  c: { align: 'c', col: 'Current' },
+  w: { align: 'c', col: 'Wanted' },
+  l: { align: 'c', col: 'Latest' },
+  d: { align: 'l', col: 'Dependent' },
+  p: { align: 'l', col: 'Location' },
+}
+```
+
+</details>
+
+### Table Examples
+
+More Table Examples Coming Soon...
+
 ## Outputs
 
 | Output   | Output&nbsp;Description |

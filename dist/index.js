@@ -29921,11 +29921,14 @@ const github = __nccwpck_require__(3228)
 
 class Pull {
     /**
-     * Create API Instance
+     * Pull Request Manager
      * @param {object} context
      * @param {string} token
      */
     constructor(context, token) {
+        if (!context.payload.pull_request) {
+            throw new Error('Missing: context.payload.pull_request')
+        }
         this.repo = context.repo
         this.pull_request = context.payload.pull_request
         this.octokit = github.getOctokit(token)
@@ -29973,7 +29976,7 @@ class Pull {
     }
 
     /**
-     * Update Comment
+     * Create Comment
      * @param {string} body
      * @return {Promise<object>}
      */
@@ -32355,30 +32358,6 @@ const maps = {
     p: { align: 'l', col: 'Location' },
 }
 
-// const json = `{
-//  "@vercel/ncc": {
-//    "current": "0.38.2",
-//    "wanted": "0.38.3",
-//    "latest": "0.38.3",
-//    "dependent": "npm-outdated-action",
-//    "location": "/home/shane/docker/npm-outdated-action/node_modules/@vercel/ncc"
-//  },
-//  "markdown-table": {
-//    "current": "3.0.3",
-//    "wanted": "3.0.4",
-//    "latest": "3.0.4",
-//    "dependent": "npm-outdated-action",
-//    "location": "/home/shane/docker/npm-outdated-action/node_modules/markdown-table"
-//  },
-//  "prettier": {
-//    "current": "3.5.3",
-//    "wanted": "3.5.3",
-//    "latest": "4.0.0",
-//    "dependent": "npm-outdated-action",
-//    "location": "/home/shane/docker/npm-outdated-action/node_modules/prettier"
-//  }
-// }`
-
 ;(async () => {
     try {
         core.info(`🏳️ Starting NPM Outdated Check`)
@@ -32417,8 +32396,7 @@ const maps = {
 
         core.startGroup('Outdated JSON')
         console.log(myOutput)
-        core.endGroup() //
-        // const myOutput = json
+        core.endGroup() // Outdated JSON
 
         /** @type {{current: string, wanted: string, latest: string, dependent: string, location: string}} **/
         const data = JSON.parse(myOutput)
@@ -32491,12 +32469,10 @@ async function updatePull(config, data, markdown) {
     if (!github.context.payload.pull_request?.number) {
         throw new Error('Unable to determine the Pull Request number!')
     }
+
     const newHex = createHash('sha256').update(markdown).digest('hex')
-    // console.log('newHex:', newHex)
     const id = `<!-- npm-outdated-action ${newHex} -->`
-    // console.log('id:', id)
     const body = `${id}\n${markdown}`
-    // console.log('body:\n', body)
 
     const pull = new Pull(github.context, config.token)
 

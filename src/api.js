@@ -2,11 +2,14 @@ const github = require('@actions/github')
 
 class Pull {
     /**
-     * Create API Instance
+     * Pull Request Manager
      * @param {object} context
      * @param {string} token
      */
     constructor(context, token) {
+        if (!context.payload.pull_request) {
+            throw new Error('Missing: context.payload.pull_request')
+        }
         this.repo = context.repo
         this.pull_request = context.payload.pull_request
         this.octokit = github.getOctokit(token)
@@ -54,7 +57,7 @@ class Pull {
     }
 
     /**
-     * Update Comment
+     * Create Comment
      * @param {string} body
      * @return {Promise<object>}
      */
