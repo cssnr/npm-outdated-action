@@ -6,6 +6,8 @@ const github = require('@actions/github')
 const { createHash } = require('crypto')
 const { markdownTable } = require('markdown-table')
 
+const { Pull } = require('./api')
+
 const maps = {
     n: { align: 'l', col: 'Package&nbsp;Name' },
     c: { align: 'c', col: 'Current' },
@@ -14,30 +16,6 @@ const maps = {
     d: { align: 'l', col: 'Dependent' },
     p: { align: 'l', col: 'Location' },
 }
-
-// const json = `{
-//  "@vercel/ncc": {
-//    "current": "0.38.2",
-//    "wanted": "0.38.3",
-//    "latest": "0.38.3",
-//    "dependent": "npm-outdated-action",
-//    "location": "/home/shane/docker/npm-outdated-action/node_modules/@vercel/ncc"
-//  },
-//  "markdown-table": {
-//    "current": "3.0.3",
-//    "wanted": "3.0.4",
-//    "latest": "3.0.4",
-//    "dependent": "npm-outdated-action",
-//    "location": "/home/shane/docker/npm-outdated-action/node_modules/markdown-table"
-//  },
-//  "prettier": {
-//    "current": "3.5.3",
-//    "wanted": "3.5.3",
-//    "latest": "4.0.0",
-//    "dependent": "npm-outdated-action",
-//    "location": "/home/shane/docker/npm-outdated-action/node_modules/prettier"
-//  }
-// }`
 
 ;(async () => {
     try {
@@ -65,40 +43,50 @@ const maps = {
         //     await exec.exec('npm', ['i'])
         // }
         if (!fs.existsSync('node_modules')) {
-            core.startGroup('Running: npm install')
-            await exec.exec('npm', ['i'])
+            core.startGroup('Running: npm ci')
+            await exec.exec('npm', ['ci'])
             core.endGroup() // npm install
         }
 
         const opts = { ignoreReturnCode: true }
+        core.startGroup('Running: npm outdated')
         const myOutput = await checkOutput('npm', ['outdated', '--json'], opts)
-        // const myOutput = json
-        console.log('myOutput:\n', myOutput)
+        core.endGroup() // npm outdated
+
+        core.startGroup('Outdated JSON')
+        console.log(myOutput)
+        core.endGroup() // Outdated JSON
 
         /** @type {{current: string, wanted: string, latest: string, dependent: string, location: string}} **/
         const data = JSON.parse(myOutput)
-        console.log('data:\n', data)
-        const table = genTable(config, data)
-        console.log('table:\n', table)
-        const markdown = genMarkdown(config, table)
-        console.log('markdown:\n', markdown)
+        core.startGroup('Outdated Object')
+        console.log(data)
+        core.endGroup() // Outdated Object
 
-        let updated
+        core.startGroup('Generate Table')
+        const table = genTable(config, data)
+        core.endGroup() // Generate Table
+        core.startGroup('Table Data')
+        console.log(table)
+        core.endGroup() // Table Data
+
+        const markdown = genMarkdown(config, table)
+        core.startGroup('Markdown String')
+        console.log(markdown)
+        core.endGroup() // Markdown String
+
+        let comment
         if (
             github.context.eventName === 'pull_request' &&
             (github.context.payload.pull_request?.comments ||
                 Object.entries(data).length)
         ) {
-            updated = await updatePull(config, data, markdown)
-            console.log('updated:', updated)
+            core.startGroup(`Processing PR: ${github.context.payload.number}`)
+            comment = await updatePull(config, data, markdown)
+            console.log('Complete.')
+            core.endGroup() // Processing PR
         } else {
             console.log('Not PR AND (No Comments OR Outdated Packages)')
-        }
-
-        if (updated) {
-            console.log('Comment was UPDATED!!!')
-        } else {
-            console.log('Comment NOT updated...')
         }
 
         // Outputs
@@ -110,7 +98,7 @@ const maps = {
         if (config.summary) {
             core.info('📝 Writing Job Summary')
             try {
-                await addSummary(config, markdown)
+                await addSummary(config, markdown, comment)
             } catch (e) {
                 console.log(e)
                 core.error(`Error writing Job Summary ${e.message}`)
@@ -130,81 +118,53 @@ const maps = {
  * @param {Config} config
  * @param {Object} data
  * @param {String} markdown
- * @return {Promise<Boolean>}
+ * @return {Promise<Object|undefined>}
  */
 async function updatePull(config, data, markdown) {
-    console.log('updatePull:', github.context.payload.pull_request.number)
-    console.log('pr.comments:', github.context.payload.pull_request.comments)
-
-    const newHex = createHash('sha256').update(markdown).digest('hex')
-    console.log('newHex:', newHex)
-    const id = `<!-- npm-outdated-action ${newHex} -->`
-    console.log('id:', id)
-    const body = `${id}\n${markdown}`
-    console.log('body:\n', body)
-
-    const octokit = github.getOctokit(config.token)
-
-    // Step 1 - Check for Current Comment
-    let currentComment
-    if (github.context.payload.pull_request.comments) {
-        console.log('Getting PR Comments...')
-        const comments = await octokit.rest.issues.listComments({
-            ...github.context.repo,
-            issue_number: github.context.payload.pull_request.number,
-        })
-        // console.log('comments.data:', comments.data)
-        if (comments.data.length) {
-            for (const comment of comments.data) {
-                // console.log('comment:', comment)
-                if (comment.body.startsWith('<!-- npm-outdated-action')) {
-                    currentComment = comment
-                    break
-                }
-            }
-        }
+    if (!github.context.payload.pull_request?.number) {
+        throw new Error('Unable to determine the Pull Request number!')
     }
 
-    console.log('currentComment:', currentComment)
-    if (!currentComment && !Object.entries(data).length) {
-        console.log('No currentComment AND no outdated packages, skipping...')
-        return false
+    const newHex = createHash('sha256').update(markdown).digest('hex')
+    const id = `<!-- npm-outdated-action ${newHex} -->`
+    const body = `${id}\n${markdown}`
+
+    const pull = new Pull(github.context, config.token)
+
+    // Step 1 - Check for Current Comment
+    let comment = await pull.getComment('<!-- npm-outdated-action')
+    console.log('comment:', comment)
+    if (!comment && !Object.entries(data).length) {
+        console.log('No comment AND no outdated packages, skipping...')
+        return comment
     }
 
     // Step 2 - Update Comment: Skip, Edit, or Add
-    if (currentComment) {
+    if (comment) {
         // Step 2A - Comment Found ...
-        console.log('FOUND EXISTING COMMENT:', currentComment.id)
-        const oldHex = currentComment.body.split(' ', 3)[2]
+        console.log('Comment Found:', comment.id)
+        const oldHex = comment.body.split(' ', 3)[2]
         console.log('oldHex:', oldHex)
         console.log('newHex:', newHex)
         if (oldHex === newHex) {
             // Step 2A-1 - Valid Hex - Skip
             console.log('Comment Valid Hex - Skip')
-            return false
+            return comment
         } else {
             // Step 2A-2 - Invalid Hex - Edit
             console.log('Comment Invalid Hex - Edit')
-            const response = await octokit.rest.issues.updateComment({
-                ...github.context.repo,
-                comment_id: currentComment.id,
-                body,
-            })
+            const response = await pull.updateComment(comment.id, body)
             // TODO: Add error handling
             console.log('response.status:', response.status)
-            return response.status === 200
+            return comment
         }
     } else {
         // Step 2B - Not Found - Add
         console.log('Not Found - Add')
-        const response = await octokit.rest.issues.createComment({
-            ...github.context.repo,
-            issue_number: github.context.payload.pull_request.number,
-            body,
-        })
+        const response = await pull.createComment(body)
         // TODO: Add error handling
         console.log('response.status:', response.status)
-        return response.status === 201
+        return response.data
     }
 }
 
@@ -216,7 +176,6 @@ async function updatePull(config, data, markdown) {
  * @return {Promise<String>}
  */
 async function checkOutput(commandLine, args = [], options = {}) {
-    console.log('checkOutput')
     let myOutput = ''
     let myError = ''
     options.listeners = {
@@ -240,7 +199,6 @@ async function checkOutput(commandLine, args = [], options = {}) {
  * @return {String}
  */
 function genMarkdown(config, data) {
-    console.log('genMarkdown')
     let result = `${config.heading}\n\n`
     if (!data.length) {
         result += '✅ All packages have been updated.'
@@ -255,8 +213,8 @@ function genMarkdown(config, data) {
     console.log('table:\n', table)
     const open = config.open ? ' open' : ''
     result +=
-        `<details${open}><summary>${config.toggle}</summary>\n\n` +
-        `Outdated Packages:\n\n${table}\n\n</details>\n`
+        `<details${open}><summary>${config.toggle}</summary>\n\n${table}\n\n</details>\n\n` +
+        'Update packages with: `npm update --save`'
     return result
 }
 
@@ -267,7 +225,6 @@ function genMarkdown(config, data) {
  * @return {*[]}
  */
 function genTable(config, outdated) {
-    console.log('genTable')
     // TODO: Ensure order of returned data
     const results = []
     for (const [name, data] of Object.entries(outdated)) {
@@ -301,10 +258,20 @@ function genTable(config, outdated) {
  * Add Summary
  * @param {Config} config
  * @param {String} markdown
+ * @param {Object} comment
  * @return {Promise<void>}
  */
-async function addSummary(config, markdown) {
+async function addSummary(config, markdown, comment) {
     core.summary.addRaw('## NPM Outdated Check\n\n')
+    if (comment) {
+        const url = `https://github.com/${github.context.repo.owner}/${github.context.repo.repo}/pull/${github.context.payload.number}#issuecomment-${comment.id}`
+        core.summary.addRaw(
+            `PR Comment: [#${github.context.payload.number}](${url}) \n\n`
+        )
+    } else {
+        core.summary.addRaw('No PR Comment Found.\n\n')
+    }
+
     core.summary.addRaw(`${markdown}\n\n---\n\n`)
 
     delete config.token

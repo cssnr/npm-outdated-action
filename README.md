@@ -64,11 +64,11 @@ Coming Soon...
 
 ### Permissions
 
-This action requires the following permissions to update release notes:
+This action requires the following permissions to add pull request comments:
 
 ```yaml
 permissions:
-  contents: write
+  pull-requests: write
 ```
 
 Permissions documentation for [Workflows](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/controlling-permissions-for-github_token) and [Actions](https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication).
@@ -96,6 +96,25 @@ Default value: `n,c,w,l`
 | `l` | Latest       | Latest Version    |
 | `d` | Dependent    | Dependent Package |
 | `p` | Location     | Path of Package   |
+
+<details><summary>👀 View the Column Map</summary>
+
+```javascript
+const maps = {
+  n: { align: 'l', col: 'Package&nbsp;Name' },
+  c: { align: 'c', col: 'Current' },
+  w: { align: 'c', col: 'Wanted' },
+  l: { align: 'c', col: 'Latest' },
+  d: { align: 'l', col: 'Dependent' },
+  p: { align: 'l', col: 'Location' },
+}
+```
+
+</details>
+
+### Table Examples
+
+More Table Examples Coming Soon...
 
 ## Outputs
 

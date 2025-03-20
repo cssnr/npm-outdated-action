@@ -13008,7 +13008,7 @@ module.exports = {
 
 
 const { parseSetCookie } = __nccwpck_require__(8915)
-const { stringify, getHeadersList } = __nccwpck_require__(3834)
+const { stringify } = __nccwpck_require__(3834)
 const { webidl } = __nccwpck_require__(4222)
 const { Headers } = __nccwpck_require__(6349)
 
@@ -13084,14 +13084,13 @@ function getSetCookies (headers) {
 
   webidl.brandCheck(headers, Headers, { strict: false })
 
-  const cookies = getHeadersList(headers).cookies
+  const cookies = headers.getSetCookie()
 
   if (!cookies) {
     return []
   }
 
-  // In older versions of undici, cookies is a list of name:value.
-  return cookies.map((pair) => parseSetCookie(Array.isArray(pair) ? pair[1] : pair))
+  return cookies.map((pair) => parseSetCookie(pair))
 }
 
 /**
@@ -13519,14 +13518,15 @@ module.exports = {
 /***/ }),
 
 /***/ 3834:
-/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+/***/ ((module) => {
 
 "use strict";
 
 
-const assert = __nccwpck_require__(2613)
-const { kHeadersList } = __nccwpck_require__(6443)
-
+/**
+ * @param {string} value
+ * @returns {boolean}
+ */
 function isCTLExcludingHtab (value) {
   if (value.length === 0) {
     return false
@@ -13787,31 +13787,13 @@ function stringify (cookie) {
   return out.join('; ')
 }
 
-let kHeadersListNode
-
-function getHeadersList (headers) {
-  if (headers[kHeadersList]) {
-    return headers[kHeadersList]
-  }
-
-  if (!kHeadersListNode) {
-    kHeadersListNode = Object.getOwnPropertySymbols(headers).find(
-      (symbol) => symbol.description === 'headers list'
-    )
-
-    assert(kHeadersListNode, 'Headers cannot be parsed')
-  }
-
-  const headersList = headers[kHeadersListNode]
-  assert(headersList)
-
-  return headersList
-}
-
 module.exports = {
   isCTLExcludingHtab,
-  stringify,
-  getHeadersList
+  validateCookieName,
+  validateCookiePath,
+  validateCookieValue,
+  toIMFDate,
+  stringify
 }
 
 
@@ -17815,6 +17797,7 @@ const {
   isValidHeaderName,
   isValidHeaderValue
 } = __nccwpck_require__(5523)
+const util = __nccwpck_require__(9023)
 const { webidl } = __nccwpck_require__(4222)
 const assert = __nccwpck_require__(2613)
 
@@ -18368,6 +18351,9 @@ Object.defineProperties(Headers.prototype, {
   [Symbol.toStringTag]: {
     value: 'Headers',
     configurable: true
+  },
+  [util.inspect.custom]: {
+    enumerable: false
   }
 })
 
@@ -27544,6 +27530,20 @@ class Pool extends PoolBase {
       ? { ...options.interceptors }
       : undefined
     this[kFactory] = factory
+
+    this.on('connectionError', (origin, targets, error) => {
+      // If a connection error occurs, we remove the client from the pool,
+      // and emit a connectionError event. They will not be re-used.
+      // Fixes https://github.com/nodejs/undici/issues/3895
+      for (const target of targets) {
+        // Do not use kRemoveClient here, as it will close the client,
+        // but the client cannot be closed in this state.
+        const idx = this[kClients].indexOf(target)
+        if (idx !== -1) {
+          this[kClients].splice(idx, 1)
+        }
+      }
+    })
   }
 
   [kGetDispatcher] () {
@@ -29914,6 +29914,86 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
+/***/ 8793:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const github = __nccwpck_require__(3228)
+
+class Pull {
+    /**
+     * Pull Request Manager
+     * @param {object} context
+     * @param {string} token
+     */
+    constructor(context, token) {
+        if (!context.payload.pull_request) {
+            throw new Error('Missing: context.payload.pull_request')
+        }
+        this.repo = context.repo
+        this.pull_request = context.payload.pull_request
+        this.octokit = github.getOctokit(token)
+    }
+
+    /**
+     * Get Comment by startsWith
+     * TODO: Process additional pages, max per_page is 100
+     * @param {String} start
+     * @return {Promise<Object|undefined>}
+     */
+    async getComment(start) {
+        if (this.pull_request.comments && start) {
+            const comments = await this.octokit.rest.issues.listComments({
+                ...this.repo,
+                issue_number: this.pull_request.number,
+                per_page: 100,
+            })
+            // TODO: Add error handling
+            console.log('comments.status:', comments.status)
+            // console.log('comments.data:', comments.data)
+            if (comments.data.length) {
+                for (const comment of comments.data) {
+                    // console.log('comment:', comment)
+                    if (comment.body.startsWith(start)) {
+                        return comment
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Update Comment
+     * @param {string} comment_id
+     * @param {string} body
+     * @return {Promise<object>}
+     */
+    async updateComment(comment_id, body) {
+        return await this.octokit.rest.issues.updateComment({
+            ...this.repo,
+            comment_id,
+            body,
+        })
+    }
+
+    /**
+     * Create Comment
+     * @param {string} body
+     * @return {Promise<object>}
+     */
+    async createComment(body) {
+        return await this.octokit.rest.issues.createComment({
+            ...this.repo,
+            issue_number: this.pull_request.number,
+            body,
+        })
+    }
+}
+
+module.exports = { Pull }
+
+
+/***/ }),
+
 /***/ 2613:
 /***/ ((module) => {
 
@@ -32267,6 +32347,8 @@ const github = __nccwpck_require__(3228)
 const { createHash } = __nccwpck_require__(6982)
 const { markdownTable } = __nccwpck_require__(3116)
 
+const { Pull } = __nccwpck_require__(8793)
+
 const maps = {
     n: { align: 'l', col: 'Package&nbsp;Name' },
     c: { align: 'c', col: 'Current' },
@@ -32275,30 +32357,6 @@ const maps = {
     d: { align: 'l', col: 'Dependent' },
     p: { align: 'l', col: 'Location' },
 }
-
-// const json = `{
-//  "@vercel/ncc": {
-//    "current": "0.38.2",
-//    "wanted": "0.38.3",
-//    "latest": "0.38.3",
-//    "dependent": "npm-outdated-action",
-//    "location": "/home/shane/docker/npm-outdated-action/node_modules/@vercel/ncc"
-//  },
-//  "markdown-table": {
-//    "current": "3.0.3",
-//    "wanted": "3.0.4",
-//    "latest": "3.0.4",
-//    "dependent": "npm-outdated-action",
-//    "location": "/home/shane/docker/npm-outdated-action/node_modules/markdown-table"
-//  },
-//  "prettier": {
-//    "current": "3.5.3",
-//    "wanted": "3.5.3",
-//    "latest": "4.0.0",
-//    "dependent": "npm-outdated-action",
-//    "location": "/home/shane/docker/npm-outdated-action/node_modules/prettier"
-//  }
-// }`
 
 ;(async () => {
     try {
@@ -32326,40 +32384,50 @@ const maps = {
         //     await exec.exec('npm', ['i'])
         // }
         if (!fs.existsSync('node_modules')) {
-            core.startGroup('Running: npm install')
-            await exec.exec('npm', ['i'])
+            core.startGroup('Running: npm ci')
+            await exec.exec('npm', ['ci'])
             core.endGroup() // npm install
         }
 
         const opts = { ignoreReturnCode: true }
+        core.startGroup('Running: npm outdated')
         const myOutput = await checkOutput('npm', ['outdated', '--json'], opts)
-        // const myOutput = json
-        console.log('myOutput:\n', myOutput)
+        core.endGroup() // npm outdated
+
+        core.startGroup('Outdated JSON')
+        console.log(myOutput)
+        core.endGroup() // Outdated JSON
 
         /** @type {{current: string, wanted: string, latest: string, dependent: string, location: string}} **/
         const data = JSON.parse(myOutput)
-        console.log('data:\n', data)
-        const table = genTable(config, data)
-        console.log('table:\n', table)
-        const markdown = genMarkdown(config, table)
-        console.log('markdown:\n', markdown)
+        core.startGroup('Outdated Object')
+        console.log(data)
+        core.endGroup() // Outdated Object
 
-        let updated
+        core.startGroup('Generate Table')
+        const table = genTable(config, data)
+        core.endGroup() // Generate Table
+        core.startGroup('Table Data')
+        console.log(table)
+        core.endGroup() // Table Data
+
+        const markdown = genMarkdown(config, table)
+        core.startGroup('Markdown String')
+        console.log(markdown)
+        core.endGroup() // Markdown String
+
+        let comment
         if (
             github.context.eventName === 'pull_request' &&
             (github.context.payload.pull_request?.comments ||
                 Object.entries(data).length)
         ) {
-            updated = await updatePull(config, data, markdown)
-            console.log('updated:', updated)
+            core.startGroup(`Processing PR: ${github.context.payload.number}`)
+            comment = await updatePull(config, data, markdown)
+            console.log('Complete.')
+            core.endGroup() // Processing PR
         } else {
             console.log('Not PR AND (No Comments OR Outdated Packages)')
-        }
-
-        if (updated) {
-            console.log('Comment was UPDATED!!!')
-        } else {
-            console.log('Comment NOT updated...')
         }
 
         // Outputs
@@ -32371,7 +32439,7 @@ const maps = {
         if (config.summary) {
             core.info('📝 Writing Job Summary')
             try {
-                await addSummary(config, markdown)
+                await addSummary(config, markdown, comment)
             } catch (e) {
                 console.log(e)
                 core.error(`Error writing Job Summary ${e.message}`)
@@ -32391,81 +32459,53 @@ const maps = {
  * @param {Config} config
  * @param {Object} data
  * @param {String} markdown
- * @return {Promise<Boolean>}
+ * @return {Promise<Object|undefined>}
  */
 async function updatePull(config, data, markdown) {
-    console.log('updatePull:', github.context.payload.pull_request.number)
-    console.log('pr.comments:', github.context.payload.pull_request.comments)
-
-    const newHex = createHash('sha256').update(markdown).digest('hex')
-    console.log('newHex:', newHex)
-    const id = `<!-- npm-outdated-action ${newHex} -->`
-    console.log('id:', id)
-    const body = `${id}\n${markdown}`
-    console.log('body:\n', body)
-
-    const octokit = github.getOctokit(config.token)
-
-    // Step 1 - Check for Current Comment
-    let currentComment
-    if (github.context.payload.pull_request.comments) {
-        console.log('Getting PR Comments...')
-        const comments = await octokit.rest.issues.listComments({
-            ...github.context.repo,
-            issue_number: github.context.payload.pull_request.number,
-        })
-        // console.log('comments.data:', comments.data)
-        if (comments.data.length) {
-            for (const comment of comments.data) {
-                // console.log('comment:', comment)
-                if (comment.body.startsWith('<!-- npm-outdated-action')) {
-                    currentComment = comment
-                    break
-                }
-            }
-        }
+    if (!github.context.payload.pull_request?.number) {
+        throw new Error('Unable to determine the Pull Request number!')
     }
 
-    console.log('currentComment:', currentComment)
-    if (!currentComment && !Object.entries(data).length) {
-        console.log('No currentComment AND no outdated packages, skipping...')
-        return false
+    const newHex = createHash('sha256').update(markdown).digest('hex')
+    const id = `<!-- npm-outdated-action ${newHex} -->`
+    const body = `${id}\n${markdown}`
+
+    const pull = new Pull(github.context, config.token)
+
+    // Step 1 - Check for Current Comment
+    let comment = await pull.getComment('<!-- npm-outdated-action')
+    console.log('comment:', comment)
+    if (!comment && !Object.entries(data).length) {
+        console.log('No comment AND no outdated packages, skipping...')
+        return comment
     }
 
     // Step 2 - Update Comment: Skip, Edit, or Add
-    if (currentComment) {
+    if (comment) {
         // Step 2A - Comment Found ...
-        console.log('FOUND EXISTING COMMENT:', currentComment.id)
-        const oldHex = currentComment.body.split(' ', 3)[2]
+        console.log('Comment Found:', comment.id)
+        const oldHex = comment.body.split(' ', 3)[2]
         console.log('oldHex:', oldHex)
         console.log('newHex:', newHex)
         if (oldHex === newHex) {
             // Step 2A-1 - Valid Hex - Skip
             console.log('Comment Valid Hex - Skip')
-            return false
+            return comment
         } else {
             // Step 2A-2 - Invalid Hex - Edit
             console.log('Comment Invalid Hex - Edit')
-            const response = await octokit.rest.issues.updateComment({
-                ...github.context.repo,
-                comment_id: currentComment.id,
-                body,
-            })
+            const response = await pull.updateComment(comment.id, body)
             // TODO: Add error handling
             console.log('response.status:', response.status)
-            return response.status === 200
+            return comment
         }
     } else {
         // Step 2B - Not Found - Add
         console.log('Not Found - Add')
-        const response = await octokit.rest.issues.createComment({
-            ...github.context.repo,
-            issue_number: github.context.payload.pull_request.number,
-            body,
-        })
+        const response = await pull.createComment(body)
         // TODO: Add error handling
         console.log('response.status:', response.status)
-        return response.status === 201
+        return response.data
     }
 }
 
@@ -32477,7 +32517,6 @@ async function updatePull(config, data, markdown) {
  * @return {Promise<String>}
  */
 async function checkOutput(commandLine, args = [], options = {}) {
-    console.log('checkOutput')
     let myOutput = ''
     let myError = ''
     options.listeners = {
@@ -32501,7 +32540,6 @@ async function checkOutput(commandLine, args = [], options = {}) {
  * @return {String}
  */
 function genMarkdown(config, data) {
-    console.log('genMarkdown')
     let result = `${config.heading}\n\n`
     if (!data.length) {
         result += '✅ All packages have been updated.'
@@ -32516,8 +32554,8 @@ function genMarkdown(config, data) {
     console.log('table:\n', table)
     const open = config.open ? ' open' : ''
     result +=
-        `<details${open}><summary>${config.toggle}</summary>\n\n` +
-        `Outdated Packages:\n\n${table}\n\n</details>\n`
+        `<details${open}><summary>${config.toggle}</summary>\n\n${table}\n\n</details>\n\n` +
+        'Update packages with: `npm update --save`'
     return result
 }
 
@@ -32528,7 +32566,6 @@ function genMarkdown(config, data) {
  * @return {*[]}
  */
 function genTable(config, outdated) {
-    console.log('genTable')
     // TODO: Ensure order of returned data
     const results = []
     for (const [name, data] of Object.entries(outdated)) {
@@ -32562,10 +32599,20 @@ function genTable(config, outdated) {
  * Add Summary
  * @param {Config} config
  * @param {String} markdown
+ * @param {Object} comment
  * @return {Promise<void>}
  */
-async function addSummary(config, markdown) {
+async function addSummary(config, markdown, comment) {
     core.summary.addRaw('## NPM Outdated Check\n\n')
+    if (comment) {
+        const url = `https://github.com/${github.context.repo.owner}/${github.context.repo.repo}/pull/${github.context.payload.number}#issuecomment-${comment.id}`
+        core.summary.addRaw(
+            `PR Comment: [#${github.context.payload.number}](${url}) \n\n`
+        )
+    } else {
+        core.summary.addRaw('No PR Comment Found.\n\n')
+    }
+
     core.summary.addRaw(`${markdown}\n\n---\n\n`)
 
     delete config.token
