@@ -18,12 +18,16 @@ inputs:
     description: "Update Heading Text"
     required: false
     default: "### NPM Outdated Check"
-  toggle:
-    description: "Summary Toggle Text"
-    required: false
-    default: "Click to Toggle Packages"
   open:
-    description: "Summary Open by Default"
+    description: "Details Open by Default"
+    required: false
+    default: "true"
+  ncu:
+    description: "Show npm-check-updates Output"
+    required: false
+    default: "true"
+  update:
+    description: "Show npm update --dry-run Output"
     required: false
     default: "true"
   link:

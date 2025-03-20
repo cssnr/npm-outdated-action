@@ -41,7 +41,6 @@ jobs:
         uses: ./
         with:
           columns: "n,c,w,l"
-          latest: true
 
       - name: "Verify Outputs"
         env:

@@ -43,15 +43,16 @@ Check out the [Table Examples](#Table-Examples) to see more.
 
 ## Inputs
 
-| Input   | Req. | Default&nbsp;Value         | Input&nbsp;Description                         |
-| :------ | :--: | :------------------------- | :--------------------------------------------- |
-| columns |  -   | `n,c,w,l`                  | Customize Table Columns [⤵️](#Table-Options)   |
-| latest  |  -   | `true`                     | Report if Latest > Wanted [⤵️](#Table-Options) |
-| heading |  -   | `### Package Changes`      | Release Notes Heading [⤵️](#Table-Options)     |
-| toggle  |  -   | `Click to Toggle Packages` | Toggle Text for Summary [⤵️](#Table-Options)   |
-| open    |  -   | `true`                     | Summary Open by Default [⤵️](#Table-Options)   |
-| summary |  -   | `true`                     | Add Workflow Job Summary \*                    |
-| token   |  -   | `github.token`             | For use with a PAT                             |
+| Input   | Req. | Default&nbsp;Value    | Input&nbsp;Description                                |
+| :------ | :--: | :-------------------- | :---------------------------------------------------- |
+| columns |  -   | `n,c,w,l`             | Customize Table Columns [⤵️](#Table-Options)          |
+| latest  |  -   | `true`                | Report if Latest > Wanted [⤵️](#Table-Options)        |
+| heading |  -   | `### Package Changes` | Release Notes Heading [⤵️](#Table-Options)            |
+| open    |  -   | `true`                | Details Open by Default [⤵️](#Table-Options)          |
+| ncu     |  -   | `true`                | Show npm-check-updates Output [⤵️](#Table-Options)    |
+| update  |  -   | `true`                | Show npm update --dry-run Output [⤵️](#Table-Options) |
+| summary |  -   | `true`                | Add Workflow Job Summary \*                           |
+| token   |  -   | `github.token`        | For use with a PAT                                    |
 
 **summary:** Will add result details to the job summary on the workflow run.
 

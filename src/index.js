@@ -50,18 +50,40 @@ const maps = {
 
         const opts = { ignoreReturnCode: true }
         core.startGroup('Running: npm outdated')
-        const myOutput = await checkOutput('npm', ['outdated', '--json'], opts)
+        const npmOutdated = await checkOutput(
+            'npm',
+            ['outdated', '--json'],
+            opts
+        )
         core.endGroup() // npm outdated
 
         core.startGroup('Outdated JSON')
-        console.log(myOutput)
+        console.log(npmOutdated)
         core.endGroup() // Outdated JSON
 
         /** @type {{current: string, wanted: string, latest: string, dependent: string, location: string}} **/
-        const data = JSON.parse(myOutput)
+        const data = JSON.parse(npmOutdated)
         core.startGroup('Outdated Object')
         console.log(data)
         core.endGroup() // Outdated Object
+
+        core.startGroup('Running: npx npm-check-updates')
+        const npxNcu = await checkOutput('npx', ['npm-check-updates'])
+        const ncu = npxNcu.split('\n').slice(2, -2).join('\n')
+        console.log('-----------')
+        console.log(ncu)
+        console.log('-----------')
+        core.endGroup() // npx npm-check-updates
+
+        core.startGroup('Running: npm update --dry-run')
+        const npmUpdate = await checkOutput('npm', ['update', '--dry-run'])
+        const update = !npmUpdate.trim().startsWith('up to date')
+            ? npmUpdate
+            : ''
+        console.log('-----------')
+        console.log(update)
+        console.log('-----------')
+        core.endGroup() // npm update --dry-run
 
         core.startGroup('Generate Table')
         const table = genTable(config, data)
@@ -70,7 +92,7 @@ const maps = {
         console.log(table)
         core.endGroup() // Table Data
 
-        const markdown = genMarkdown(config, table)
+        const markdown = genMarkdown(config, table, ncu, update)
         core.startGroup('Markdown String')
         console.log(markdown)
         core.endGroup() // Markdown String
@@ -196,25 +218,35 @@ async function checkOutput(commandLine, args = [], options = {}) {
  * Generate Markdown
  * @param {Config} config
  * @param {Array[]} data
+ * @param {String} ncu
+ * @param {String} update
  * @return {String}
  */
-function genMarkdown(config, data) {
-    let result = `${config.heading}\n\n`
-    if (!data.length) {
-        result += '✅ All packages have been updated.'
-        return result
-    }
-    const [cols, align] = [[], []]
-    config.columns.forEach((c) => cols.push(maps[c].col))
-    config.columns.forEach((c) => align.push(maps[c].align))
-    console.log('cols, align:', cols, align)
-
-    const table = markdownTable([cols, ...data], { align })
-    console.log('table:\n', table)
+function genMarkdown(config, data, ncu, update) {
     const open = config.open ? ' open' : ''
-    result +=
-        `<details${open}><summary>${config.toggle}</summary>\n\n${table}\n\n</details>\n\n` +
-        'Update packages with: `npm update --save`'
+    let result = `${config.heading}\n\n`
+
+    if (data.length) {
+        const [cols, align] = [[], []]
+        config.columns.forEach((c) => cols.push(maps[c].col))
+        config.columns.forEach((c) => align.push(maps[c].align))
+        console.log('cols, align:', cols, align)
+
+        const table = markdownTable([cols, ...data], { align })
+        console.log('table:\n', table)
+        result += `<details${open}><summary>npm outdated</summary>\n\n${table}\n\n</details>\n\n`
+    } else {
+        result += '✅ All packages have been updated.\n\n'
+    }
+
+    if (config.ncu && ncu) {
+        result += `<details${open}><summary>npm-check-updates</summary>\n\n\`\`\`text\n${ncu}\n\`\`\`\n\n</details>\n\n`
+    }
+
+    if (config.update && update) {
+        result += `<details${open}><summary>npm update --dry-run</summary>\n\n\`\`\`text\n${update}\n\`\`\`\n\n</details>\n\n`
+    }
+
     return result
 }
 
@@ -294,9 +326,10 @@ async function addSummary(config, markdown, comment) {
  * @property {String[]} columns
  * @property {Boolean} latest
  * @property {String} heading
- * @property {String} toggle
  * @property {Boolean} summary
  * @property {Boolean} open
+ * @property {Boolean} ncu
+ * @property {Boolean} update
  * @property {Boolean} link
  * @property {String} token
  * @return {Config}
@@ -306,8 +339,9 @@ function getConfig() {
         columns: core.getInput('columns', { required: true }).split(','),
         latest: core.getBooleanInput('latest'),
         heading: core.getInput('heading'),
-        toggle: core.getInput('toggle'),
         open: core.getBooleanInput('open'),
+        ncu: core.getBooleanInput('ncu'),
+        update: core.getBooleanInput('update'),
         link: core.getBooleanInput('link'),
         summary: core.getBooleanInput('summary'),
         token: core.getInput('token', { required: true }),
