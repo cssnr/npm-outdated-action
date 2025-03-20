@@ -64,11 +64,11 @@ Coming Soon...
 
 ### Permissions
 
-This action requires the following permissions to update release notes:
+This action requires the following permissions to add pull request comments:
 
 ```yaml
 permissions:
-  contents: write
+  pull-requests: write
 ```
 
 Permissions documentation for [Workflows](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/controlling-permissions-for-github_token) and [Actions](https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication).
