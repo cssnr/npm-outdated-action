@@ -44,7 +44,7 @@ const maps = {
         // }
         if (!fs.existsSync('node_modules')) {
             core.startGroup('Running: npm install')
-            await exec.exec('npm', ['i'])
+            await exec.exec('npm', ['ci'])
             core.endGroup() // npm install
         }
 
