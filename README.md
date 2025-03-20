@@ -36,6 +36,11 @@ You can customize the heading, column visibility, column order, and reporting on
 
 For more details see the [Table Examples](#Table-Examples).
 
+> [!NOTE]  
+> This action is under active development. Please
+> [request any features](https://github.com/cssnr/npm-outdated-action/discussions/categories/feature-requests)
+> you would like to see and [report any issues](https://github.com/cssnr/npm-outdated-action/issues) you find.
+
 ## Inputs
 
 | Input   | Req. | Default&nbsp;Value         | Input&nbsp;Description                         |
