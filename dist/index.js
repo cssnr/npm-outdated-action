@@ -29914,6 +29914,83 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
+/***/ 8793:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const github = __nccwpck_require__(3228)
+
+class Pull {
+    /**
+     * Create API Instance
+     * @param {object} context
+     * @param {string} token
+     */
+    constructor(context, token) {
+        this.repo = context.repo
+        this.pull_request = context.payload.pull_request
+        this.octokit = github.getOctokit(token)
+    }
+
+    /**
+     * Get Comment by startsWith
+     * TODO: Process additional pages, max per_page is 100
+     * @param {String} start
+     * @return {Promise<Object|undefined>}
+     */
+    async getComment(start) {
+        if (this.pull_request.comments && start) {
+            const comments = await this.octokit.rest.issues.listComments({
+                ...this.repo,
+                issue_number: this.pull_request.number,
+                per_page: 100,
+            })
+            // TODO: Add error handling
+            console.log('comments.status:', comments.status)
+            // console.log('comments.data:', comments.data)
+            if (comments.data.length) {
+                for (const comment of comments.data) {
+                    // console.log('comment:', comment)
+                    if (comment.body.startsWith(start)) {
+                        return comment
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Update Comment
+     * @param {string} comment_id
+     * @param {string} body
+     * @return {Promise<object>}
+     */
+    async updateComment(comment_id, body) {
+        return await this.octokit.rest.issues.updateComment({
+            ...this.repo,
+            comment_id,
+            body,
+        })
+    }
+
+    /**
+     * Update Comment
+     * @param {string} body
+     * @return {Promise<object>}
+     */
+    async createComment(body) {
+        return await this.octokit.rest.issues.createComment({
+            ...this.repo,
+            issue_number: this.pull_request.number,
+            body,
+        })
+    }
+}
+
+module.exports = { Pull }
+
+
+/***/ }),
+
 /***/ 2613:
 /***/ ((module) => {
 
@@ -32267,6 +32344,8 @@ const github = __nccwpck_require__(3228)
 const { createHash } = __nccwpck_require__(6982)
 const { markdownTable } = __nccwpck_require__(3116)
 
+const { Pull } = __nccwpck_require__(8793)
+
 const maps = {
     n: { align: 'l', col: 'Package&nbsp;Name' },
     c: { align: 'c', col: 'Current' },
@@ -32394,49 +32473,31 @@ const maps = {
  * @return {Promise<Boolean>}
  */
 async function updatePull(config, data, markdown) {
-    console.log('updatePull:', github.context.payload.pull_request.number)
-    console.log('pr.comments:', github.context.payload.pull_request.comments)
-
+    if (!github.context.payload.pull_request?.number) {
+        throw new Error('Unable to determine the Pull Request number!')
+    }
     const newHex = createHash('sha256').update(markdown).digest('hex')
-    console.log('newHex:', newHex)
+    // console.log('newHex:', newHex)
     const id = `<!-- npm-outdated-action ${newHex} -->`
-    console.log('id:', id)
+    // console.log('id:', id)
     const body = `${id}\n${markdown}`
-    console.log('body:\n', body)
+    // console.log('body:\n', body)
 
-    const octokit = github.getOctokit(config.token)
+    const pull = new Pull(github.context, config.token)
 
     // Step 1 - Check for Current Comment
-    let currentComment
-    if (github.context.payload.pull_request.comments) {
-        console.log('Getting PR Comments...')
-        const comments = await octokit.rest.issues.listComments({
-            ...github.context.repo,
-            issue_number: github.context.payload.pull_request.number,
-        })
-        // console.log('comments.data:', comments.data)
-        if (comments.data.length) {
-            for (const comment of comments.data) {
-                // console.log('comment:', comment)
-                if (comment.body.startsWith('<!-- npm-outdated-action')) {
-                    currentComment = comment
-                    break
-                }
-            }
-        }
-    }
-
-    console.log('currentComment:', currentComment)
-    if (!currentComment && !Object.entries(data).length) {
-        console.log('No currentComment AND no outdated packages, skipping...')
+    let comment = await pull.getComment('<!-- npm-outdated-action')
+    console.log('comment:', comment)
+    if (!comment && !Object.entries(data).length) {
+        console.log('No comment AND no outdated packages, skipping...')
         return false
     }
 
     // Step 2 - Update Comment: Skip, Edit, or Add
-    if (currentComment) {
+    if (comment) {
         // Step 2A - Comment Found ...
-        console.log('FOUND EXISTING COMMENT:', currentComment.id)
-        const oldHex = currentComment.body.split(' ', 3)[2]
+        console.log('Comment Found:', comment.id)
+        const oldHex = comment.body.split(' ', 3)[2]
         console.log('oldHex:', oldHex)
         console.log('newHex:', newHex)
         if (oldHex === newHex) {
@@ -32446,26 +32507,18 @@ async function updatePull(config, data, markdown) {
         } else {
             // Step 2A-2 - Invalid Hex - Edit
             console.log('Comment Invalid Hex - Edit')
-            const response = await octokit.rest.issues.updateComment({
-                ...github.context.repo,
-                comment_id: currentComment.id,
-                body,
-            })
+            const response = await pull.updateComment(comment.id, body)
             // TODO: Add error handling
             console.log('response.status:', response.status)
-            return response.status === 200
+            return true
         }
     } else {
         // Step 2B - Not Found - Add
         console.log('Not Found - Add')
-        const response = await octokit.rest.issues.createComment({
-            ...github.context.repo,
-            issue_number: github.context.payload.pull_request.number,
-            body,
-        })
+        const response = await pull.createComment(body)
         // TODO: Add error handling
         console.log('response.status:', response.status)
-        return response.status === 201
+        return true
     }
 }
 
