@@ -14,5 +14,8 @@ jobs:
     timeout-minutes: 5
 
     steps:
+      - name: "Checkout"
+        uses: actions/checkout@v4
+
       - name: "NPM Outdated Check"
         uses: cssnr/npm-outdated-action@master
