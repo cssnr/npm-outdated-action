@@ -32414,24 +32414,18 @@ const maps = {
         console.log(markdown)
         core.endGroup() // Markdown String
 
-        let updated
+        let comment
         if (
             github.context.eventName === 'pull_request' &&
             (github.context.payload.pull_request?.comments ||
                 Object.entries(data).length)
         ) {
             core.startGroup(`Processing PR: ${github.context.payload.number}`)
-            updated = await updatePull(config, data, markdown)
-            console.log('PR Updated:', updated)
+            comment = await updatePull(config, data, markdown)
+            console.log('Complete.')
             core.endGroup() // Processing PR
         } else {
             console.log('Not PR AND (No Comments OR Outdated Packages)')
-        }
-
-        if (updated) {
-            console.log('Comment was UPDATED!!!')
-        } else {
-            console.log('Comment NOT updated...')
         }
 
         // Outputs
@@ -32443,7 +32437,7 @@ const maps = {
         if (config.summary) {
             core.info('📝 Writing Job Summary')
             try {
-                await addSummary(config, markdown, updated)
+                await addSummary(config, markdown, comment)
             } catch (e) {
                 console.log(e)
                 core.error(`Error writing Job Summary ${e.message}`)
@@ -32463,7 +32457,7 @@ const maps = {
  * @param {Config} config
  * @param {Object} data
  * @param {String} markdown
- * @return {Promise<Boolean>}
+ * @return {Promise<Object|undefined>}
  */
 async function updatePull(config, data, markdown) {
     if (!github.context.payload.pull_request?.number) {
@@ -32481,7 +32475,7 @@ async function updatePull(config, data, markdown) {
     console.log('comment:', comment)
     if (!comment && !Object.entries(data).length) {
         console.log('No comment AND no outdated packages, skipping...')
-        return false
+        return comment
     }
 
     // Step 2 - Update Comment: Skip, Edit, or Add
@@ -32494,14 +32488,14 @@ async function updatePull(config, data, markdown) {
         if (oldHex === newHex) {
             // Step 2A-1 - Valid Hex - Skip
             console.log('Comment Valid Hex - Skip')
-            return false
+            return comment
         } else {
             // Step 2A-2 - Invalid Hex - Edit
             console.log('Comment Invalid Hex - Edit')
             const response = await pull.updateComment(comment.id, body)
             // TODO: Add error handling
             console.log('response.status:', response.status)
-            return true
+            return comment
         }
     } else {
         // Step 2B - Not Found - Add
@@ -32509,7 +32503,7 @@ async function updatePull(config, data, markdown) {
         const response = await pull.createComment(body)
         // TODO: Add error handling
         console.log('response.status:', response.status)
-        return true
+        return response.data
     }
 }
 
@@ -32603,14 +32597,22 @@ function genTable(config, outdated) {
  * Add Summary
  * @param {Config} config
  * @param {String} markdown
- * @param {Boolean} updated
+ * @param {Object} comment
  * @return {Promise<void>}
  */
-async function addSummary(config, markdown, updated) {
+async function addSummary(config, markdown, comment) {
     core.summary.addRaw('## NPM Outdated Check\n\n')
-    if (updated) {
-        core.summary.addRaw(`PR Comment Updated.\n\n`)
+    if (comment) {
+        // https://github.com/smashedr/test-workflows/pull/2#issuecomment-2738162014
+        const url = `https://github.com/${github.context.repo.owner}/${github.context.repo.repo}/pull/${github.context.payload.number}#issuecomment-${comment.id}`
+        console.log('url:', url)
+        core.summary.addRaw(
+            `PR Comment: ${github.context.payload.number}#issuecomment-${comment.id} \n\n`
+        )
+    } else {
+        console.log('PR Comment NOT Found!')
     }
+
     core.summary.addRaw(`${markdown}\n\n---\n\n`)
 
     delete config.token
