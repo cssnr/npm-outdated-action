@@ -1,0 +1,18 @@
+name: "Pull"
+
+on:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pull:
+    name: "Pull"
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: "NPM Outdated Check"
+        uses: cssnr/npm-outdated-action@master

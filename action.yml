@@ -1,0 +1,50 @@
+name: "NPM Outdated Check"
+description: "NPM Outdated Check Action"
+author: "Shane"
+branding:
+  icon: "type"
+  color: "green"
+
+inputs:
+  columns:
+    description: "Column Order and Visibility"
+    required: false
+    default: "n,c,w,l"
+  latest:
+    description: "Report if Latest > Wanted"
+    required: false
+    default: "true"
+  heading:
+    description: "Update Heading Text"
+    required: false
+    default: "### NPM Outdated Check"
+  toggle:
+    description: "Summary Toggle Text"
+    required: false
+    default: "Click to Toggle Packages"
+  open:
+    description: "Summary Open by Default"
+    required: false
+    default: "true"
+  link:
+    description: "Use Link for Names"
+    required: false
+    default: "true"
+  summary:
+    description: "Add Summary to Job"
+    required: false
+    default: "true"
+  token:
+    description: "GitHub Token"
+    required: false
+    default: ${{ github.token }}
+
+outputs:
+  json:
+    description: "Changes JSON Object"
+  markdown:
+    description: "Changes Markdown Table"
+
+runs:
+  using: "node20"
+  main: "dist/index.js"
