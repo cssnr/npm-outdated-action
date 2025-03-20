@@ -264,11 +264,9 @@ function genTable(config, outdated) {
 async function addSummary(config, markdown, comment) {
     core.summary.addRaw('## NPM Outdated Check\n\n')
     if (comment) {
-        // https://github.com/smashedr/test-workflows/pull/2#issuecomment-2738162014
         const url = `https://github.com/${github.context.repo.owner}/${github.context.repo.repo}/pull/${github.context.payload.number}#issuecomment-${comment.id}`
-        console.log('url:', url)
         core.summary.addRaw(
-            `PR Comment: ${github.context.payload.number}#issuecomment-${comment.id} \n\n`
+            `PR Comment: [#${github.context.payload.number}](${url}) \n\n`
         )
     } else {
         core.summary.addRaw('No PR Comment Found.\n\n')
