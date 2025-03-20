@@ -18,8 +18,9 @@
 
 - [Inputs](#Inputs)
   - [Permissions](#Permissions)
-  - [Table Options](#Table-Options)
 - [Outputs](#Outputs)
+- [Table Options](#Table-Options)
+  - [Table Examples](#Table-Examples)
 - [Examples](#Examples)
 - [Tags](#Tags)
 - [Features](#Features)
@@ -33,17 +34,19 @@ This action will comment on a PR if packages are outdated. As packages are updat
 
 You can customize the heading, column visibility, column order, and reporting on wanted or latest.
 
+For more details see the [Table Examples](#Table-Examples).
+
 ## Inputs
 
-| Input   | Req. | Default&nbsp;Value           | Input&nbsp;Description                         |
-| :------ | :--: | :--------------------------- | :--------------------------------------------- |
-| columns |  -   | `n,c,w,l`                    | Customize Table Columns [⤵️](#Table-Options)   |
-| latest  |  -   | `true`                       | Report if Latest > Wanted [⤵️](#Table-Options) |
-| heading |  -   | `### Package Changes`        | Release Notes Heading [⤵️](#Table-Options)     |
-| toggle  |  -   | `Click Here to View Changes` | Toggle Text for Summary [⤵️](#Table-Options)   |
-| open    |  -   | `true`                       | Summary Open by Default [⤵️](#Table-Options)   |
-| summary |  -   | `true`                       | Add Workflow Job Summary \*                    |
-| token   |  -   | `github.token`               | For use with a PAT                             |
+| Input   | Req. | Default&nbsp;Value         | Input&nbsp;Description                         |
+| :------ | :--: | :------------------------- | :--------------------------------------------- |
+| columns |  -   | `n,c,w,l`                  | Customize Table Columns [⤵️](#Table-Options)   |
+| latest  |  -   | `true`                     | Report if Latest > Wanted [⤵️](#Table-Options) |
+| heading |  -   | `### Package Changes`      | Release Notes Heading [⤵️](#Table-Options)     |
+| toggle  |  -   | `Click to Toggle Packages` | Toggle Text for Summary [⤵️](#Table-Options)   |
+| open    |  -   | `true`                     | Summary Open by Default [⤵️](#Table-Options)   |
+| summary |  -   | `true`                     | Add Workflow Job Summary \*                    |
+| token   |  -   | `github.token`             | For use with a PAT                             |
 
 **summary:** Will add result details to the job summary on the workflow run.
 
@@ -69,6 +72,8 @@ At a minimum, you need to checkout the repository and run in repository root.
 
 The action will run a npm clean install if the `node_modules` directory is not present.
 
+You can view more [Examples](#Examples) below.
+
 ### Permissions
 
 This action requires the following permissions to add pull request comments:
@@ -79,6 +84,49 @@ permissions:
 ```
 
 Permissions documentation for [Workflows](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/controlling-permissions-for-github_token) and [Actions](https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication).
+
+## Outputs
+
+| Output   | Output&nbsp;Description |
+| :------- | :---------------------- |
+| json     | Chnages JSON Object     |
+| markdown | Changes Markdown Table  |
+
+This outputs the changes `json` object and the `markdown` table.
+
+```yaml
+- name: 'NPM Outdated Check'
+  id: outdated
+  uses: cssnr/npm-outdated-action@master
+
+- name: 'Echo Output'
+  env:
+    JSON: ${{ steps.outdated.outputs.json }}
+    MARKDOWN: ${{ steps.outdated.outputs.markdown }}
+  run: |
+    echo "json: '${{ env.JSON }}'"
+    echo "markdown: '${{ env.MARKDOWN }}'"
+```
+
+Note: due to the way `${{}}` expressions are evaluated, multi-line output gets executed in a run block.
+
+<details><summary>JSON Schema</summary>
+
+```json
+{
+  "@package/name": {
+    "current": "1.0.0",
+    "wanted": "1.0.1",
+    "latest": "2.0.0",
+    "dependent": "npm-outdated-action",
+    "location": "node_modules/name"
+  }
+}
+```
+
+</details>
+
+More Output Examples Coming Soon...
 
 ### Table Options
 
@@ -123,6 +171,8 @@ const maps = {
 
 <details open><summary>🔷 View Basic Example</summary>
 
+---
+
 <details open><summary>Click to Toggle Packages</summary>
 
 | Package&nbsp;Name                            | Current | Wanted | Latest |
@@ -138,49 +188,6 @@ Update packages with: `npm update --save`
 </details>
 
 More Table Examples Coming Soon...
-
-## Outputs
-
-| Output   | Output&nbsp;Description |
-| :------- | :---------------------- |
-| json     | Chnages JSON Object     |
-| markdown | Changes Markdown Table  |
-
-This outputs the changes `json` object and the `markdown` table.
-
-```yaml
-- name: 'NPM Outdated Check'
-  id: outdated
-  uses: cssnr/npm-outdated-action@master
-
-- name: 'Echo Output'
-  env:
-    JSON: ${{ steps.outdated.outputs.json }}
-    MARKDOWN: ${{ steps.outdated.outputs.markdown }}
-  run: |
-    echo "json: '${{ env.JSON }}'"
-    echo "markdown: '${{ env.MARKDOWN }}'"
-```
-
-Note: due to the way `${{}}` expressions are evaluated, multi-line output gets executed in a run block.
-
-<details><summary>JSON Schema</summary>
-
-```json
-{
-  "@package/name": {
-    "current": "1.0.0",
-    "wanted": "1.0.1",
-    "latest": "2.0.0",
-    "dependent": "npm-outdated-action",
-    "location": "node_modules/name"
-  }
-}
-```
-
-</details>
-
-More Output Examples Coming Soon...
 
 ## Examples
 
