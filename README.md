@@ -205,6 +205,7 @@ More Table Examples Coming Soon...
 ```yaml
 - name: 'Package Changelog Action'
   uses: cssnr/npm-outdated-action@master
+  continue-on-error: true
   with:
     heading: '**NPM Changelog**'
 ```
