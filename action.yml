@@ -1,5 +1,5 @@
 name: "NPM Outdated Check"
-description: "NPM Outdated Check Action"
+description: "Runs npm outdated and comments on a Pull Request with a customizable table of packages current, wanted, and latest versions."
 author: "Shane"
 branding:
   icon: "type"

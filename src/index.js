@@ -262,7 +262,7 @@ function genTable(config, outdated) {
  * @return {Promise<void>}
  */
 async function addSummary(config, markdown, comment) {
-    core.summary.addRaw('## NPM Outdated Check\n\n')
+    core.summary.addRaw('## NPM Outdated Action\n\n')
     if (comment) {
         const url = `https://github.com/${github.context.repo.owner}/${github.context.repo.repo}/pull/${github.context.payload.number}#issuecomment-${comment.id}`
         core.summary.addRaw(
@@ -272,7 +272,7 @@ async function addSummary(config, markdown, comment) {
         core.summary.addRaw('No PR Comment Found.\n\n')
     }
 
-    core.summary.addRaw(`${markdown}\n\n---\n\n`)
+    core.summary.addRaw(`---\n\n${markdown}\n\n---\n\n`)
 
     delete config.token
     const yaml = Object.entries(config)

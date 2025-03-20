@@ -29962,6 +29962,31 @@ class Pull {
     }
 
     /**
+     * Create Comment
+     * @param {string} body
+     * @return {Promise<object>}
+     */
+    async createComment(body) {
+        return await this.octokit.rest.issues.createComment({
+            ...this.repo,
+            issue_number: this.pull_request.number,
+            body,
+        })
+    }
+
+    /**
+     * Delete Comment
+     * @param {string} comment_id
+     * @return {Promise<object>}
+     */
+    async deleteComment(comment_id) {
+        return await this.octokit.rest.issues.deleteComment({
+            ...this.repo,
+            comment_id,
+        })
+    }
+
+    /**
      * Update Comment
      * @param {string} comment_id
      * @param {string} body
@@ -29971,19 +29996,6 @@ class Pull {
         return await this.octokit.rest.issues.updateComment({
             ...this.repo,
             comment_id,
-            body,
-        })
-    }
-
-    /**
-     * Create Comment
-     * @param {string} body
-     * @return {Promise<object>}
-     */
-    async createComment(body) {
-        return await this.octokit.rest.issues.createComment({
-            ...this.repo,
-            issue_number: this.pull_request.number,
             body,
         })
     }
@@ -32603,7 +32615,7 @@ function genTable(config, outdated) {
  * @return {Promise<void>}
  */
 async function addSummary(config, markdown, comment) {
-    core.summary.addRaw('## NPM Outdated Check\n\n')
+    core.summary.addRaw('## NPM Outdated Action\n\n')
     if (comment) {
         const url = `https://github.com/${github.context.repo.owner}/${github.context.repo.repo}/pull/${github.context.payload.number}#issuecomment-${comment.id}`
         core.summary.addRaw(
@@ -32613,7 +32625,7 @@ async function addSummary(config, markdown, comment) {
         core.summary.addRaw('No PR Comment Found.\n\n')
     }
 
-    core.summary.addRaw(`${markdown}\n\n---\n\n`)
+    core.summary.addRaw(`---\n\n${markdown}\n\n---\n\n`)
 
     delete config.token
     const yaml = Object.entries(config)

@@ -7,7 +7,7 @@
 [![Workflow lint](https://img.shields.io/github/actions/workflow/status/cssnr/npm-outdated-action/lint.yaml?logo=github&label=lint)](https://github.com/cssnr/npm-outdated-action/actions/workflows/lint.yaml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=cssnr_npm-outdated-action&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=cssnr_npm-outdated-action)
 [![GitHub Last Commit](https://img.shields.io/github/last-commit/cssnr/npm-outdated-action?logo=github&label=updated)](https://github.com/cssnr/npm-outdated-action/graphs/commit-activity)
-[![Codeberg Last Commit](https://img.shields.io/gitea/last-commit/shaner/npm-outdated-action/master?gitea_url=https%3A%2F%2Fcodeberg.org%2F&logo=codeberg&logoColor=white&label=updated)](https://codeberg.org/shaner/npm-outdated-action)
+[![Codeberg Last Commit](https://img.shields.io/gitea/last-commit/cssnr/npm-outdated-action/master?gitea_url=https%3A%2F%2Fcodeberg.org%2F&logo=codeberg&logoColor=white&label=updated)](https://codeberg.org/cssnr/npm-outdated-action)
 [![GitHub Top Language](https://img.shields.io/github/languages/top/cssnr/npm-outdated-action?logo=htmx)](https://github.com/cssnr/npm-outdated-action)
 [![GitHub Forks](https://img.shields.io/github/forks/cssnr/npm-outdated-action?style=flat&logo=github)](https://github.com/cssnr/npm-outdated-action/forks)
 [![GitHub Repo Stars](https://img.shields.io/github/stars/cssnr/npm-outdated-action?style=flat&logo=github)](https://github.com/cssnr/npm-outdated-action/stargazers)
@@ -18,8 +18,9 @@
 
 - [Inputs](#Inputs)
   - [Permissions](#Permissions)
-  - [Table Options](#Table-Options)
 - [Outputs](#Outputs)
+- [Table Options](#Table-Options)
+  - [Table Examples](#Table-Examples)
 - [Examples](#Examples)
 - [Tags](#Tags)
 - [Features](#Features)
@@ -27,23 +28,30 @@
 - [Support](#Support)
 - [Contributing](#Contributing)
 
-Action to report npm outdated packages on a pull request and comment with a table.
+Action to report npm outdated packages on a pull request and comment with a [customizable table](#Table-Options).
 
 This action will comment on a PR if packages are outdated. As packages are updated, the comment is updated.
 
 You can customize the heading, column visibility, column order, and reporting on wanted or latest.
 
+Check out the [Table Examples](#Table-Examples) to see more.
+
+> [!NOTE]  
+> This action is under active development.  
+> Please [request any features](https://github.com/cssnr/npm-outdated-action/discussions/categories/feature-requests)
+> you would like to see and [report any issues](https://github.com/cssnr/npm-outdated-action/issues) you find.
+
 ## Inputs
 
-| Input   | Req. | Default&nbsp;Value           | Input&nbsp;Description                         |
-| :------ | :--: | :--------------------------- | :--------------------------------------------- |
-| columns |  -   | `n,c,w,l`                    | Customize Table Columns [⤵️](#Table-Options)   |
-| latest  |  -   | `true`                       | Report if Latest > Wanted [⤵️](#Table-Options) |
-| heading |  -   | `### Package Changes`        | Release Notes Heading [⤵️](#Table-Options)     |
-| toggle  |  -   | `Click Here to View Changes` | Toggle Text for Summary [⤵️](#Table-Options)   |
-| open    |  -   | `true`                       | Summary Open by Default [⤵️](#Table-Options)   |
-| summary |  -   | `true`                       | Add Workflow Job Summary \*                    |
-| token   |  -   | `github.token`               | For use with a PAT                             |
+| Input   | Req. | Default&nbsp;Value         | Input&nbsp;Description                         |
+| :------ | :--: | :------------------------- | :--------------------------------------------- |
+| columns |  -   | `n,c,w,l`                  | Customize Table Columns [⤵️](#Table-Options)   |
+| latest  |  -   | `true`                     | Report if Latest > Wanted [⤵️](#Table-Options) |
+| heading |  -   | `### Package Changes`      | Release Notes Heading [⤵️](#Table-Options)     |
+| toggle  |  -   | `Click to Toggle Packages` | Toggle Text for Summary [⤵️](#Table-Options)   |
+| open    |  -   | `true`                     | Summary Open by Default [⤵️](#Table-Options)   |
+| summary |  -   | `true`                     | Add Workflow Job Summary \*                    |
+| token   |  -   | `github.token`             | For use with a PAT                             |
 
 **summary:** Will add result details to the job summary on the workflow run.
 
@@ -57,10 +65,21 @@ Coming Soon...
 
 </details>
 
+At a minimum, you need to checkout the repository.
+The action will run a npm clean install if the `node_modules` directory is not present.
+
 ```yaml
+- name: 'Checkout'
+  uses: actions/checkout@v4
+
 - name: 'NPM Outdated Check'
   uses: cssnr/npm-outdated-action@master
+  continue-on-error: true
 ```
+
+Note: `continue-on-error: true` is used to prevent the workflow from failing if the action fails.
+
+You can view more [Examples](#Examples) below.
 
 ### Permissions
 
@@ -72,49 +91,6 @@ permissions:
 ```
 
 Permissions documentation for [Workflows](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/controlling-permissions-for-github_token) and [Actions](https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication).
-
-### Table Options
-
-**latest:** To disable reporting of latest and ONLY show wanted, set this to `false`.
-
-**heading:** You can customize the `heading` or set to an empty string to remove it.
-
-**toggle:** The `toggle` must be set to a non-empty string if changing this input.
-
-**open:** Set results to be open by default (note the first example below is open).
-
-**columns:** Customize column visibility and order.
-This must be a perfectly formatted CSV with any combination of these keys:
-
-Default value: `n,c,w,l`
-
-| Key | Column       | Description       |
-| :-: | :----------- | :---------------- |
-| `n` | Package Name | Name of Package   |
-| `c` | Current      | Current Version   |
-| `w` | Wanted       | Wanted Version    |
-| `l` | Latest       | Latest Version    |
-| `d` | Dependent    | Dependent Package |
-| `p` | Location     | Path of Package   |
-
-<details><summary>👀 View the Column Map</summary>
-
-```javascript
-const maps = {
-  n: { align: 'l', col: 'Package&nbsp;Name' },
-  c: { align: 'c', col: 'Current' },
-  w: { align: 'c', col: 'Wanted' },
-  l: { align: 'c', col: 'Latest' },
-  d: { align: 'l', col: 'Dependent' },
-  p: { align: 'l', col: 'Location' },
-}
-```
-
-</details>
-
-### Table Examples
-
-More Table Examples Coming Soon...
 
 ## Outputs
 
@@ -159,6 +135,67 @@ Note: due to the way `${{}}` expressions are evaluated, multi-line output gets e
 
 More Output Examples Coming Soon...
 
+## Table Options
+
+**latest:** To disable reporting of latest and ONLY show wanted, set this to `false`.
+
+**heading:** You can customize the `heading` or set to an empty string to remove it.
+
+**toggle:** The `toggle` must be set to a non-empty string if changing this input.
+
+**open:** Set results to be open by default (note the first example below is open).
+
+**columns:** Customize column visibility and order.
+This must be a perfectly formatted CSV with any combination of these keys:
+
+Default value: `n,c,w,l`
+
+| Key | Column       | Description       |
+| :-: | :----------- | :---------------- |
+| `n` | Package Name | Name of Package   |
+| `c` | Current      | Current Version   |
+| `w` | Wanted       | Wanted Version    |
+| `l` | Latest       | Latest Version    |
+| `d` | Dependent    | Dependent Package |
+| `p` | Location     | Path of Package   |
+
+<details><summary>👀 View the Column Map</summary>
+
+```javascript
+const maps = {
+  n: { align: 'l', col: 'Package&nbsp;Name' },
+  c: { align: 'c', col: 'Current' },
+  w: { align: 'c', col: 'Wanted' },
+  l: { align: 'c', col: 'Latest' },
+  d: { align: 'l', col: 'Dependent' },
+  p: { align: 'l', col: 'Location' },
+}
+```
+
+</details>
+
+### Table Examples
+
+<details open><summary>🔷 View Basic Example</summary>
+
+---
+
+<details open><summary>Click to Toggle Packages</summary>
+
+| Package&nbsp;Name                            | Current | Wanted | Latest |
+| :------------------------------------------- | :-----: | :----: | :----: |
+| [axios](https://www.npmjs.com/package/axios) |  1.8.3  | 1.8.4  |   -    |
+
+</details>
+
+Update packages with: `npm update --save`
+
+---
+
+</details>
+
+More Table Examples Coming Soon...
+
 ## Examples
 
 💡 _Click on an example heading to expand or collapse the example._
@@ -168,16 +205,18 @@ More Output Examples Coming Soon...
 ```yaml
 - name: 'Package Changelog Action'
   uses: cssnr/npm-outdated-action@master
+  continue-on-error: true
   with:
     heading: '**NPM Changelog**'
 ```
 
 </details>
-<details><summary>Custom Column Order</summary>
+<details open><summary>Custom Column Order</summary>
 
 ```yaml
 - name: 'Package Changelog Action'
   uses: cssnr/npm-outdated-action@master
+  continue-on-error: true
   with:
     columns: 'n,l,c,w,d'
 ```
@@ -213,12 +252,16 @@ Breaking changes would result in a **Major** version bump. At a minimum you shou
 
 ### Planned
 
+- Option to Fail Job
 - Packages Exclude List
 - Custom Column Alignment
 - Custom Column Titles
 - Custom Section Text
 
-Want to show package changes on release notes? Check out: [cssnr/package-changelog-action](https://github.com/cssnr/package-changelog-action)
+Want to show package changes on release notes? Check out: [cssnr/package-changelog-action](https://github.com/cssnr/package-changelog-action)  
+Want to automatically updated tags on release? Check out: [cssnr/update-version-tags-action](https://github.com/cssnr/update-version-tags-action)
+
+If you would like to see a new feature, please [submit a feature request](https://github.com/cssnr/npm-outdated-action/discussions/categories/feature-requests).
 
 # Support
 
@@ -254,5 +297,6 @@ Additionally, you can support other GitHub Actions I have published:
 - [Mozilla Addon Update Action](https://github.com/cssnr/mozilla-addon-update-action?tab=readme-ov-file#readme)
 - [Docker Tags Action](https://github.com/cssnr/docker-tags-action?tab=readme-ov-file#readme)
 - [Package Changelog Action](https://github.com/cssnr/package-changelog-action?tab=readme-ov-file#readme)
+- [NPM Outdated Check Action](https://github.com/cssnr/npm-outdated-action?tab=readme-ov-file#readme)
 
 For a full list of current projects to support visit: [https://cssnr.github.io/](https://cssnr.github.io/)
