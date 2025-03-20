@@ -6,6 +6,8 @@ const github = require('@actions/github')
 const { createHash } = require('crypto')
 const { markdownTable } = require('markdown-table')
 
+const { Pull } = require('./api')
+
 const maps = {
     n: { align: 'l', col: 'Package&nbsp;Name' },
     c: { align: 'c', col: 'Current' },
@@ -133,31 +135,31 @@ const maps = {
  * @return {Promise<Boolean>}
  */
 async function updatePull(config, data, markdown) {
-    console.log('updatePull:', github.context.payload.pull_request.number)
-    console.log('pr.comments:', github.context.payload.pull_request.comments)
-
+    if (!github.context.payload.pull_request?.number) {
+        throw new Error('Unable to determine the Pull Request number!')
+    }
     const newHex = createHash('sha256').update(markdown).digest('hex')
-    console.log('newHex:', newHex)
+    // console.log('newHex:', newHex)
     const id = `<!-- npm-outdated-action ${newHex} -->`
-    console.log('id:', id)
+    // console.log('id:', id)
     const body = `${id}\n${markdown}`
-    console.log('body:\n', body)
+    // console.log('body:\n', body)
 
-    const octokit = github.getOctokit(config.token)
+    const pull = new Pull(github.context, config.token)
 
     // Step 1 - Check for Current Comment
-    let currentComment = await getComment(octokit, '<!-- npm-outdated-action')
-    console.log('currentComment:', currentComment)
-    if (!currentComment && !Object.entries(data).length) {
-        console.log('No currentComment AND no outdated packages, skipping...')
+    let comment = await pull.getComment('<!-- npm-outdated-action')
+    console.log('comment:', comment)
+    if (!comment && !Object.entries(data).length) {
+        console.log('No comment AND no outdated packages, skipping...')
         return false
     }
 
     // Step 2 - Update Comment: Skip, Edit, or Add
-    if (currentComment) {
+    if (comment) {
         // Step 2A - Comment Found ...
-        console.log('FOUND EXISTING COMMENT:', currentComment.id)
-        const oldHex = currentComment.body.split(' ', 3)[2]
+        console.log('Comment Found:', comment.id)
+        const oldHex = comment.body.split(' ', 3)[2]
         console.log('oldHex:', oldHex)
         console.log('newHex:', newHex)
         if (oldHex === newHex) {
@@ -167,51 +169,18 @@ async function updatePull(config, data, markdown) {
         } else {
             // Step 2A-2 - Invalid Hex - Edit
             console.log('Comment Invalid Hex - Edit')
-            const response = await octokit.rest.issues.updateComment({
-                ...github.context.repo,
-                comment_id: currentComment.id,
-                body,
-            })
+            const response = await pull.updateComment(comment.id, body)
             // TODO: Add error handling
             console.log('response.status:', response.status)
-            return response.status === 200
+            return true
         }
     } else {
         // Step 2B - Not Found - Add
         console.log('Not Found - Add')
-        const response = await octokit.rest.issues.createComment({
-            ...github.context.repo,
-            issue_number: github.context.payload.pull_request.number,
-            body,
-        })
+        const response = await pull.createComment(body)
         // TODO: Add error handling
         console.log('response.status:', response.status)
-        return response.status === 201
-    }
-}
-
-/**
- * Get Comment by startString
- * @param {InstanceType<typeof github.GitHub>} octokit
- * @param {String} start
- * @return {Promise<Object|undefined>}
- */
-async function getComment(octokit, start) {
-    if (!github.context.payload.pull_request.comments || !start) {
-        return
-    }
-    const comments = await octokit.rest.issues.listComments({
-        ...github.context.repo,
-        issue_number: github.context.payload.pull_request.number,
-    })
-    // console.log('comments.data:', comments.data)
-    if (comments.data.length) {
-        for (const comment of comments.data) {
-            // console.log('comment:', comment)
-            if (comment.body.startsWith(start)) {
-                return comment
-            }
-        }
+        return true
     }
 }
 
