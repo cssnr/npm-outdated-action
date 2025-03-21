@@ -82,7 +82,7 @@ summary: true</code></pre>
 </details>
 
 At a minimum, you need to checkout the repository. The workspace should also be somewhat "clean".
-The action will run a npm clean-install (ci). If this fails it will report the errors.
+The action will run a npm clean-install `npm ci`. If this fails it will report the errors and skip the checks.
 
 ```yaml
 - name: 'Checkout'
