@@ -100,13 +100,15 @@ const maps = {
         const updatePR =
             Object.entries(data).length ||
             (config.ncu && ncu) ||
-            (config.update && update) ||
-            github.context.payload.pull_request?.comments
+            (config.update && update)
 
         let comment
-        if (github.context.eventName === 'pull_request' && updatePR) {
+        if (
+            github.context.eventName === 'pull_request' &&
+            (github.context.payload.pull_request?.comments || updatePR)
+        ) {
             core.startGroup(`Processing PR: ${github.context.payload.number}`)
-            comment = await updatePull(config, data, markdown)
+            comment = await updatePull(config, data, markdown, updatePR)
             console.log('Complete.')
             core.endGroup() // Processing PR
         } else {
@@ -142,9 +144,10 @@ const maps = {
  * @param {Config} config
  * @param {Object} data
  * @param {String} markdown
+ * @param {Boolean} changes
  * @return {Promise<Object|undefined>}
  */
-async function updatePull(config, data, markdown) {
+async function updatePull(config, data, markdown, changes) {
     if (!github.context.payload.pull_request?.number) {
         throw new Error('Unable to determine the Pull Request number!')
     }
@@ -158,8 +161,8 @@ async function updatePull(config, data, markdown) {
     // Step 1 - Check for Current Comment
     let comment = await pull.getComment('<!-- npm-outdated-action')
     console.log('comment:', comment)
-    if (!comment && !Object.entries(data).length) {
-        console.log('No comment AND no outdated packages, skipping...')
+    if (!comment && !changes) {
+        console.log('No comment AND no changes, skipping...')
         return comment
     }
 
