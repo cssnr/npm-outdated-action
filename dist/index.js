@@ -32395,11 +32395,30 @@ const maps = {
         //     console.log('Running NPM Install...')
         //     await exec.exec('npm', ['i'])
         // }
-        if (!fs.existsSync('node_modules')) {
-            core.startGroup('Running: npm ci')
-            await exec.exec('npm', ['ci'])
-            core.endGroup() // npm install
-        }
+
+        // let ci, cie
+
+        // let results
+        // try {
+        //     // if (!fs.existsSync('node_modules')) {
+        //     core.startGroup('Running: npm ci')
+        //     // await exec.exec('npm', ['ci'])
+        //     // [ci, cie] = await checkOutput('npm', ['ci'])
+        //     results = await checkOutput('npm', ['ci'])
+        //     console.log('results:', results)
+        //     core.endGroup() // npm install
+        //     // }
+        // } catch (e) {
+        //     console.log('e:', e)
+        //     console.log('results:', results)
+        //     core.endGroup() // npm install
+        // }
+
+        const results = await checkOutput('npm', ['ci'], true)
+        const ci = results.length > 1 ? results[1] : ''
+        console.log('-----------')
+        console.log('ci:', ci)
+        // return
 
         core.startGroup('Running: npm outdated')
         const npmOutdated = await checkOutput('npm', ['outdated', '--json'])
@@ -32442,13 +32461,21 @@ const maps = {
         console.log(table)
         core.endGroup() // Table Outdated
 
-        const hasUpdates =
+        const hasOutdated =
+            ci ||
             !!Object.entries(outdated).length ||
             !!(config.ncu && ncu) ||
             !!(config.update && update)
-        console.log('hasUpdates:', hasUpdates)
+        console.log('hasOutdated:', hasOutdated)
 
-        const markdown = genMarkdown(config, hasUpdates, table, ncu, update)
+        const markdown = genMarkdown(
+            config,
+            hasOutdated,
+            ci,
+            table,
+            ncu,
+            update
+        )
         core.startGroup('Markdown String')
         console.log(markdown)
         core.endGroup() // Markdown String
@@ -32457,10 +32484,10 @@ const maps = {
         let comment
         if (
             github.context.eventName === 'pull_request' &&
-            (github.context.payload.pull_request?.comments || hasUpdates)
+            (github.context.payload.pull_request?.comments || hasOutdated)
         ) {
             core.startGroup(`Processing PR: ${github.context.payload.number}`)
-            comment = await updatePull(config, markdown, hasUpdates)
+            comment = await updatePull(config, markdown, hasOutdated)
             console.log('Complete.')
             core.endGroup() // Processing PR
         } else {
@@ -32485,7 +32512,7 @@ const maps = {
             }
         }
 
-        if (config.fail && hasUpdates) {
+        if (config.fail && hasOutdated) {
             core.info(`⛔ \u001b[31;1mUpdates Found`)
             core.setFailed('Updates found and fail is set to true.')
         } else {
@@ -32557,12 +32584,13 @@ async function updatePull(config, markdown, changes) {
  * Check Command Output
  * @param {String} commandLine
  * @param {String[]} [args]
- * @param {Object} [options]
- * @return {Promise<String>}
+ * @param {Boolean} [error]
+ * @return {Promise<String|String[]>}
  */
-async function checkOutput(commandLine, args = [], options = {}) {
-    options = { ...{ ignoreReturnCode: true }, ...options }
+async function checkOutput(commandLine, args = [], error = false) {
+    // options = { ...{ ignoreReturnCode: true }, ...options }
     // console.log('options:', options)
+    const options = { ignoreReturnCode: true }
     let myOutput = ''
     let myError = ''
     options.listeners = {
@@ -32574,26 +32602,34 @@ async function checkOutput(commandLine, args = [], options = {}) {
         },
     }
     await exec.exec(commandLine, args, options)
-    core.debug(myError)
-    // return [myOutput, myError]
-    return myOutput.trim()
+    console.log('myError:', myError)
+    if (error) {
+        return [myOutput.trim(), myError.trim()]
+    } else {
+        return myOutput.trim()
+    }
 }
 
 /**
  * Generate Markdown
  * @param {Config} config
  * @param {Boolean} changes
+ * @param {String} ci
  * @param {Array[]} data
  * @param {String} ncu
  * @param {String} update
  * @return {String}
  */
-function genMarkdown(config, changes, data, ncu, update) {
+function genMarkdown(config, changes, ci, data, ncu, update) {
     const open = config.open ? ' open' : ''
     let result = `${config.heading}\n\n`
 
     if (!changes) {
         result += '✅ All packages are up-to-date.\n\n'
+    }
+    if (ci) {
+        result += `⛔ Error running install: \`npm ci\`\n\n`
+        result += `\`\`\`text\n${ci}\n\`\`\`\n\n`
     }
 
     if (data.length) {
