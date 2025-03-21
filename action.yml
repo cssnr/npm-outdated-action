@@ -1,5 +1,5 @@
 name: "NPM Outdated Check"
-description: "Runs npm outdated, node-check-updates, and update --dry-run, then adds a customizable comment to the Pull Request with updates."
+description: "Runs npm outdated, node-check-updates, and update --dry-run, and adds a customizable comment to the Pull Request with output."
 author: "Shane"
 branding:
   icon: "type"
@@ -34,6 +34,10 @@ inputs:
     description: "Use Link for Names"
     required: false
     default: "true"
+  fail:
+    description: "Fail Job if Updates are Found"
+    required: false
+    default: "false"
   summary:
     description: "Add Summary to Job"
     required: false

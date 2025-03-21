@@ -53,6 +53,7 @@ Check out the [Comment Examples](#Comment-Examples) to see more.
 | ncu     |  -   | `true`                   | Show npm-check-updates Output [⤵️](#Comment-Options)    |
 | update  |  -   | `true`                   | Show npm update --dry-run Output [⤵️](#Comment-Options) |
 | link    |  -   | `true`                   | Use Hyperlink for Names [⤵️](#Comment-Options)          |
+| fail    |  -   | `false`                  | Fail Job if Updates are Found [⤵️](#Comment-Options)    |
 | summary |  -   | `true`                   | Add Workflow Job Summary \*                             |
 | token   |  -   | `github.token`           | For use with a PAT                                      |
 
@@ -81,7 +82,7 @@ summary: true</code></pre>
 </details>
 
 At a minimum, you need to checkout the repository. The workspace should also be somewhat "clean".
-The action will run a npm clean install if the `node_modules` directory is not present.
+The action will run a npm clean-install `npm ci`. If this fails it will report the errors and skip the checks.
 
 ```yaml
 - name: 'Checkout'
@@ -94,7 +95,11 @@ The action will run a npm clean install if the `node_modules` directory is not p
 
 Note: `continue-on-error: true` is used to prevent the workflow from failing if the action fails.
 
-You can view more [Examples](#Examples) below.
+If you want the job to fail, remove `continue-on-error` and set `fail: true`.
+
+See the [Comment Options](#Comment-Options) for more details on inputs.
+
+You can also view more [Examples](#Examples) below.
 
 ### Permissions
 
@@ -154,7 +159,7 @@ Note: due to the way `${{}}` expressions are evaluated, multi-line output gets e
 
 </details>
 
-More Output Examples Coming Soon...
+> More Output Examples Coming Soon...
 
 ## Comment Options
 
@@ -169,6 +174,8 @@ More Output Examples Coming Soon...
 **update:** Set this to `false` to disable reporting the output of `npm update --dry-run`.
 
 **link:** Set this to `false` to use plain text for package names instead of hyperlinks.
+
+**fail:** Set this to `true` to fail if updates are found to enforce this through status checks.
 
 **columns:** Customize column visibility and order.  
 This must be a perfectly formatted CSV with any combination of these keys:
@@ -287,7 +294,40 @@ changed 6 packages in 4s
 ---
 
 </details>
-<details><summary>🔷 After Updated</summary>
+<details><summary>🔷 Only One Outdated Package</summary>
+
+---
+
+<details open><summary>npm outdated</summary>
+
+| Package&nbsp;Name                                                    | Current | Wanted  | Latest |
+| :------------------------------------------------------------------- | :-----: | :-----: | :----: |
+| [npm-check-updates](https://www.npmjs.com/package/npm-check-updates) | 17.1.15 | 17.1.16 |   -    |
+
+</details>
+
+<details open><summary>npm-check-updates</summary>
+
+```text
+ npm-check-updates  ^17.1.15  →  ^17.1.16
+```
+
+</details>
+
+<details open><summary>npm update --dry-run</summary>
+
+```text
+change npm-check-updates 17.1.15 => 17.1.16
+
+changed 1 package
+```
+
+</details>
+
+---
+
+</details>
+<details><summary>🔷 After Everything Updated</summary>
 
 ---
 
@@ -299,7 +339,7 @@ Note: this only appears if a previous comment is edited and does not show up on 
 
 </details>
 
-More Comment Examples Coming Soon...
+> More Comment Examples Coming Soon...
 
 ## Examples
 
@@ -327,6 +367,16 @@ More Comment Examples Coming Soon...
 ```
 
 This puts latest before current and adds dependent.
+
+</details>
+<details><summary>Fail Status Check if Outdated</summary>
+
+```yaml
+- name: 'Package Changelog Action'
+  uses: cssnr/npm-outdated-action@master
+  with:
+    fail: true
+```
 
 </details>
 <details open><summary>Custom Column Order</summary>
@@ -368,8 +418,41 @@ This puts latest before current and adds dependent.
 This puts latest before current and adds dependent.
 
 </details>
+<details><summary>Full Workflow Example</summary>
 
-More Examples Coming Soon...
+If you don't have a pull_request workflow already you can use this one.  
+Simply create a file called `pull.yaml` in the `.github/workflows` directory: `.github/workflows/pull.yaml`  
+Then add the below content to the file, save, commit, and create a PR...
+
+```yaml
+name: 'Pull'
+
+on:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pull:
+    name: 'Pull'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      pull-requests: write
+
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v4
+
+      - name: 'NPM Outdated Check'
+        uses: cssnr/npm-outdated-action@master
+```
+
+</details>
+
+> More Examples Coming Soon...
 
 ## Tags
 
@@ -398,7 +481,6 @@ Breaking changes would result in a **Major** version bump. At a minimum you shou
 
 ### Planned
 
-- Option to Fail Job if Outdated
 - Packages Exclude List
 - Custom Column Alignment
 - Custom Column Titles
