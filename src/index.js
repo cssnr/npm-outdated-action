@@ -102,6 +102,9 @@ const maps = {
             (config.ncu && ncu) ||
             (config.update && update)
 
+        console.log('updatePR:', updatePR)
+        console.log('comments:', github.context.payload.pull_request?.comments)
+
         let comment
         if (
             github.context.eventName === 'pull_request' &&
