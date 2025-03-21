@@ -401,7 +401,6 @@ Breaking changes would result in a **Major** version bump. At a minimum you shou
 
 ### Planned
 
-- Option to Fail Job if Outdated
 - Packages Exclude List
 - Custom Column Alignment
 - Custom Column Titles
