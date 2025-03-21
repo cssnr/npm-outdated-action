@@ -154,7 +154,7 @@ Note: due to the way `${{}}` expressions are evaluated, multi-line output gets e
 
 </details>
 
-More Output Examples Coming Soon...
+> More Output Examples Coming Soon...
 
 ## Comment Options
 
@@ -287,7 +287,7 @@ changed 6 packages in 4s
 ---
 
 </details>
-<details><summary>🔷 After Updated</summary>
+<details><summary>🔷 After Everything Updated</summary>
 
 ---
 
@@ -299,7 +299,7 @@ Note: this only appears if a previous comment is edited and does not show up on 
 
 </details>
 
-More Comment Examples Coming Soon...
+> More Comment Examples Coming Soon...
 
 ## Examples
 
@@ -369,7 +369,7 @@ This puts latest before current and adds dependent.
 
 </details>
 
-More Examples Coming Soon...
+> More Examples Coming Soon...
 
 ## Tags
 
