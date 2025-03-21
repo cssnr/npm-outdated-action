@@ -170,7 +170,7 @@ More Output Examples Coming Soon...
 
 **link:** Set this to `false` to use plain text for package names instead of hyperlinks.
 
-**columns:** Customize column visibility and order.
+**columns:** Customize column visibility and order.  
 This must be a perfectly formatted CSV with any combination of these keys:
 
 Default value: `n,c,w,l`
