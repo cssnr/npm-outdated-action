@@ -35,6 +35,7 @@ jobs:
         uses: ./
         with:
           columns: "n,c,w,l"
+          fail: true
 
       - name: "Verify Outputs"
         env:
