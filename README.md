@@ -294,6 +294,39 @@ changed 6 packages in 4s
 ---
 
 </details>
+<details><summary>🔷 Only One Outdated Package</summary>
+
+---
+
+<details open><summary>npm outdated</summary>
+
+| Package&nbsp;Name                                                    | Current | Wanted  | Latest |
+| :------------------------------------------------------------------- | :-----: | :-----: | :----: |
+| [npm-check-updates](https://www.npmjs.com/package/npm-check-updates) | 17.1.15 | 17.1.16 |   -    |
+
+</details>
+
+<details open><summary>npm-check-updates</summary>
+
+```text
+ npm-check-updates  ^17.1.15  →  ^17.1.16
+```
+
+</details>
+
+<details open><summary>npm update --dry-run</summary>
+
+```text
+change npm-check-updates 17.1.15 => 17.1.16
+
+changed 1 package
+```
+
+</details>
+
+---
+
+</details>
 <details><summary>🔷 After Everything Updated</summary>
 
 ---
