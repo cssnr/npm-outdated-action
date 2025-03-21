@@ -20,7 +20,7 @@
   - [Permissions](#Permissions)
 - [Outputs](#Outputs)
 - [Comment Options](#Comment-Options)
-  - [Comment Examples](#Comment-Examples)
+- [Comment Examples](#Comment-Examples)
 - [Examples](#Examples)
 - [Tags](#Tags)
 - [Features](#Features)
@@ -187,7 +187,9 @@ const maps = {
 
 </details>
 
-### Comment Examples
+## Comment Examples
+
+Note: the examples are generated with no heading and default options.
 
 <details open><summary>🔷 Full Example Closed</summary>
 
