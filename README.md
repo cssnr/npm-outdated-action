@@ -28,14 +28,13 @@
 - [Support](#Support)
 - [Contributing](#Contributing)
 
-Action to report npm outdated packages on a pull request and add a [customizable comment](#Comment-Options),
-including output of `npm-check-updates` and `npm update --dry-run`.
+Action to report `npm outdated` packages on a pull request and add a [customizable comment](#Comment-Options),
+also includes output of `npm-check-updates` and `npm update --dry-run`.
 
 This action will comment on a PR if packages are outdated. As packages are updated, the comment is updated.
 No comment is added on pulls when everything is up-to-date to reduce spam.
 
 You can customize the heading, column visibility, column order, and reporting on wanted or latest.
-
 Check out the [Comment Examples](#Comment-Examples) to see more.
 
 > [!NOTE]  
@@ -190,21 +189,20 @@ const maps = {
 
 ### Comment Examples
 
-<details><summary>🔷 Full Example Open</summary>
+<details open><summary>🔷 Full Example Closed</summary>
 
 ---
 
 <!-- npm-outdated-action 68d31bb9e0cb9283e3c6302dd252b976db6b179aa691a498a147f5de79fac6ec -->
 
-<details open><summary>npm outdated</summary>
+<details><summary>npm outdated</summary>
 
 | Package&nbsp;Name                            | Current | Wanted | Latest |
 | :------------------------------------------- | :-----: | :----: | :----: |
 | [axios](https://www.npmjs.com/package/axios) |  1.8.3  | 1.8.4  |   -    |
 
 </details>
-
-<details open><summary>npm-check-updates</summary>
+<details><summary>npm-check-updates</summary>
 
 ```text
  @eslint/js  ^9.20.0  →  ^9.22.0
@@ -212,8 +210,7 @@ const maps = {
 ```
 
 </details>
-
-<details open><summary>npm update --dry-run</summary>
+<details><summary>npm update --dry-run</summary>
 
 ```text
 change undici 5.28.5 => 5.29.0
@@ -234,7 +231,7 @@ changed 6 packages in 4s
 ---
 
 </details>
-<details><summary>🔷 Full Example Closed</summary>
+<details><summary>🔷 Full Example Open</summary>
 
 ---
 
@@ -247,7 +244,6 @@ changed 6 packages in 4s
 | [axios](https://www.npmjs.com/package/axios) |  1.8.3  | 1.8.4  |   -    |
 
 </details>
-
 <details open><summary>npm-check-updates</summary>
 
 ```text
@@ -256,7 +252,6 @@ changed 6 packages in 4s
 ```
 
 </details>
-
 <details open><summary>npm update --dry-run</summary>
 
 ```text
