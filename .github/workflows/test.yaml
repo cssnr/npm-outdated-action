@@ -34,8 +34,7 @@ jobs:
         id: test
         uses: ./
         with:
-          fail: true
-          #columns: "n,c,w,l"
+          #fail: true
 
       - name: "Verify Outputs"
         env:

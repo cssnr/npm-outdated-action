@@ -385,6 +385,39 @@ This puts latest before current and adds dependent.
 This puts latest before current and adds dependent.
 
 </details>
+<details><summary>Full Workflow Example</summary>
+
+If you don't have a pull_request workflow already you can use this one.  
+Simply create a file called `pull.yaml` in the `.github/workflows` directory: `.github/workflows/pull.yaml`  
+Then add the below content to the file, save, commit, and create a PR...
+
+```yaml
+name: 'Pull'
+
+on:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pull:
+    name: 'Pull'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      pull-requests: write
+
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v4
+
+      - name: 'NPM Outdated Check'
+        uses: cssnr/npm-outdated-action@master
+```
+
+</details>
 
 > More Examples Coming Soon...
 
