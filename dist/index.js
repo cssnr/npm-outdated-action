@@ -32420,39 +32420,48 @@ const maps = {
         console.log('ci:', ci)
         // return
 
-        core.startGroup('Running: npm outdated')
-        const npmOutdated = await checkOutput('npm', ['outdated', '--json'])
-        core.endGroup() // npm outdated
+        let outdated = ''
+        if (!ci) {
+            core.startGroup('Running: npm outdated')
+            const npmOutdated = await checkOutput('npm', ['outdated', '--json'])
+            core.endGroup() // npm outdated
 
-        core.startGroup('Outdated JSON')
-        console.log(npmOutdated)
-        core.endGroup() // Outdated JSON
+            core.startGroup('Outdated JSON')
+            console.log(npmOutdated)
+            core.endGroup() // Outdated JSON
 
-        /** @type {{current: string, wanted: string, latest: string, dependent: string, location: string}} **/
-        const outdated = JSON.parse(npmOutdated)
-        core.startGroup('Outdated Object')
-        console.log(outdated)
-        core.endGroup() // Outdated Object
+            /** @type {{current: string, wanted: string, latest: string, dependent: string, location: string}} **/
+            outdated = JSON.parse(npmOutdated)
+            core.startGroup('Outdated Object')
+            console.log(outdated)
+            core.endGroup() // Outdated Object
+        }
 
-        core.startGroup('Running: npx npm-check-updates')
-        const npxNcu = await checkOutput('npx', ['npm-check-updates'])
-        const ncu = npxNcu.split('\n').slice(2, -2).join('\n')
-        console.log('-----------')
-        console.log(ncu)
-        console.log('-----------')
-        core.endGroup() // npx npm-check-updates
+        let ncu = ''
+        if (!ci) {
+            core.startGroup('Running: npx npm-check-updates')
+            const npxNcu = await checkOutput('npx', ['npm-check-updates'])
+            ncu = npxNcu.split('\n').slice(2, -2).join('\n')
+            console.log('-----------')
+            console.log(ncu)
+            console.log('-----------')
+            core.endGroup() // npx npm-check-updates
+        }
 
-        core.startGroup('Running: npm update --dry-run')
-        const npmUpdate = await checkOutput('npm', ['update', '--dry-run'])
-        const update = !npmUpdate.trim().startsWith('up to date')
-            ? npmUpdate.substring(0, npmUpdate.lastIndexOf(' in'))
-            : ''
-        console.log('-----------')
-        console.log(update)
-        console.log('-----------')
-        console.log(JSON.stringify(update))
-        console.log('-----------')
-        core.endGroup() // npm update --dry-run
+        let update = ''
+        if (!ci) {
+            core.startGroup('Running: npm update --dry-run')
+            const npmUpdate = await checkOutput('npm', ['update', '--dry-run'])
+            update = !npmUpdate.trim().startsWith('up to date')
+                ? npmUpdate.substring(0, npmUpdate.lastIndexOf(' in'))
+                : ''
+            console.log('-----------')
+            console.log(update)
+            console.log('-----------')
+            console.log(JSON.stringify(update))
+            console.log('-----------')
+            core.endGroup() // npm update --dry-run
+        }
 
         core.startGroup('Generate Table')
         const table = genTable(config, outdated)
