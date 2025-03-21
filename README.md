@@ -190,7 +190,7 @@ const maps = {
 
 ### Comment Examples
 
-<details open><summary>🔷 View Full Example</summary>
+<details><summary>🔷 Full Example Open</summary>
 
 ---
 
@@ -234,7 +234,51 @@ changed 6 packages in 4s
 ---
 
 </details>
-<details><summary>🔷 After Everything is Updated</summary>
+<details><summary>🔷 Full Example Closed</summary>
+
+---
+
+<!-- npm-outdated-action 68d31bb9e0cb9283e3c6302dd252b976db6b179aa691a498a147f5de79fac6ec -->
+
+<details open><summary>npm outdated</summary>
+
+| Package&nbsp;Name                            | Current | Wanted | Latest |
+| :------------------------------------------- | :-----: | :----: | :----: |
+| [axios](https://www.npmjs.com/package/axios) |  1.8.3  | 1.8.4  |   -    |
+
+</details>
+
+<details open><summary>npm-check-updates</summary>
+
+```text
+ @eslint/js  ^9.20.0  →  ^9.22.0
+ axios        ^1.8.3  →   ^1.8.4
+```
+
+</details>
+
+<details open><summary>npm update --dry-run</summary>
+
+```text
+change undici 5.28.5 => 5.29.0
+change axios 1.8.3 => 1.8.4
+change @pkgr/core 0.1.1 => 0.1.2
+change @octokit/types 13.8.0 => 13.10.0
+change @octokit/openapi-types 23.0.1 => 24.2.0
+change @octokit/core 5.2.0 => 5.2.1
+
+changed 6 packages in 4s
+
+32 packages are looking for funding
+  run `npm fund` for details
+```
+
+</details>
+
+---
+
+</details>
+<details><summary>🔷 After Updated</summary>
 
 ---
 
