@@ -64,11 +64,7 @@ Check out the [Comment Examples](#Comment-Examples) to see more.
 
 PR Comment: [#4](https://github.com/cssnr/npm-outdated-action/pull/4#issuecomment-2742441847)
 
----
-
-_Comment Update will Appear Here_
-
----
+_PR Comment will Appear Here_
 
 <details><summary>Config</summary><pre lang="yaml"><code>columns: ["n","c","w","l"]
 latest: true
