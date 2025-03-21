@@ -229,6 +229,17 @@ changed 6 packages in 4s
 ---
 
 </details>
+<details open><summary>🔷 After Everything is Updated</summary>
+
+---
+
+✅ All packages are up-to-date.
+
+---
+
+Note: this only appears if a previous comment is edited and does not show up on a new PR with no outdated packages.
+
+</details>
 
 More Table Examples Coming Soon...
 
