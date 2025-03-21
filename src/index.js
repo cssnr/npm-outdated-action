@@ -73,10 +73,12 @@ const maps = {
         core.startGroup('Running: npm update --dry-run')
         const npmUpdate = await checkOutput('npm', ['update', '--dry-run'])
         const update = !npmUpdate.trim().startsWith('up to date')
-            ? npmUpdate
+            ? npmUpdate.substring(0, npmUpdate.lastIndexOf(' in'))
             : ''
         console.log('-----------')
         console.log(update)
+        console.log('-----------')
+        console.log(JSON.stringify(update))
         console.log('-----------')
         core.endGroup() // npm update --dry-run
 
