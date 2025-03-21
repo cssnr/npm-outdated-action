@@ -185,11 +185,13 @@ const maps = {
 
 ### Table Examples
 
-<details open><summary>🔷 View Basic Example</summary>
+<details open><summary>🔷 View Full Example</summary>
 
 ---
 
-<details open><summary>Click to Toggle Packages</summary>
+<!-- npm-outdated-action 68d31bb9e0cb9283e3c6302dd252b976db6b179aa691a498a147f5de79fac6ec -->
+
+<details open><summary>npm outdated</summary>
 
 | Package&nbsp;Name                            | Current | Wanted | Latest |
 | :------------------------------------------- | :-----: | :----: | :----: |
@@ -197,7 +199,32 @@ const maps = {
 
 </details>
 
-Update packages with: `npm update --save`
+<details open><summary>npm-check-updates</summary>
+
+```text
+ @eslint/js  ^9.20.0  →  ^9.22.0
+ axios        ^1.8.3  →   ^1.8.4
+```
+
+</details>
+
+<details open><summary>npm update --dry-run</summary>
+
+```text
+change undici 5.28.5 => 5.29.0
+change axios 1.8.3 => 1.8.4
+change @pkgr/core 0.1.1 => 0.1.2
+change @octokit/types 13.8.0 => 13.10.0
+change @octokit/openapi-types 23.0.1 => 24.2.0
+change @octokit/core 5.2.0 => 5.2.1
+
+changed 6 packages in 4s
+
+32 packages are looking for funding
+  run `npm fund` for details
+```
+
+</details>
 
 ---
 
@@ -246,7 +273,7 @@ The following rolling [tags](https://github.com/cssnr/npm-outdated-action/tags) 
 | [![GitHub Tag Minor](https://img.shields.io/github/v/tag/cssnr/npm-outdated-action?sort=semver&filter=!v*.*.*&style=for-the-badge&label=%20&color=blue)](https://github.com/cssnr/npm-outdated-action/releases/latest) |   ✅    |  ✅  |  ❌   | **Minor** | `vN.N.x` | `vN.N`   |
 | [![GitHub Release](https://img.shields.io/github/v/release/cssnr/npm-outdated-action?style=for-the-badge&label=%20&color=red)](https://github.com/cssnr/npm-outdated-action/releases/latest)                           |   ❌    |  ❌  |  ❌   | **Micro** | `vN.N.N` | `vN.N.N` |
 
-You can view the release notes for each version on the [releases](https://github.com/cssnr/cloudflare-purge-cache-action/releases) page.
+You can view the release notes for each version on the [releases](https://github.com/cssnr/npm-outdated-action/releases) page.
 
 The **Major** tag is recommended. It is the most up-to-date and always backwards compatible.
 Breaking changes would result in a **Major** version bump. At a minimum you should use a **Minor** tag.
