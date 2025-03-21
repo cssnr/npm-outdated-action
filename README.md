@@ -45,16 +45,17 @@ Check out the [Table Examples](#Table-Examples) to see more.
 
 ## Inputs
 
-| Input   | Req. | Default&nbsp;Value    | Input&nbsp;Description                                |
-| :------ | :--: | :-------------------- | :---------------------------------------------------- |
-| columns |  -   | `n,c,w,l`             | Customize Table Columns [⤵️](#Table-Options)          |
-| latest  |  -   | `true`                | Report if Latest > Wanted [⤵️](#Table-Options)        |
-| heading |  -   | `### Package Changes` | Release Notes Heading [⤵️](#Table-Options)            |
-| open    |  -   | `true`                | Details Open by Default [⤵️](#Table-Options)          |
-| ncu     |  -   | `true`                | Show npm-check-updates Output [⤵️](#Table-Options)    |
-| update  |  -   | `true`                | Show npm update --dry-run Output [⤵️](#Table-Options) |
-| summary |  -   | `true`                | Add Workflow Job Summary \*                           |
-| token   |  -   | `github.token`        | For use with a PAT                                    |
+| Input   | Req. | Default&nbsp;Value       | Input&nbsp;Description                                |
+| :------ | :--: | :----------------------- | :---------------------------------------------------- |
+| columns |  -   | `n,c,w,l`                | Customize Table Columns [⤵️](#Table-Options)          |
+| latest  |  -   | `true`                   | Report if Latest > Wanted [⤵️](#Table-Options)        |
+| heading |  -   | `### NPM Outdated Check` | Comment Heading [⤵️](#Table-Options)                  |
+| open    |  -   | `true`                   | Details Open by Default [⤵️](#Table-Options)          |
+| ncu     |  -   | `true`                   | Show npm-check-updates Output [⤵️](#Table-Options)    |
+| update  |  -   | `true`                   | Show npm update --dry-run Output [⤵️](#Table-Options) |
+| link    |  -   | `true`                   | Use Hyperlink for Names [⤵️](#Table-Options)          |
+| summary |  -   | `true`                   | Add Workflow Job Summary \*                           |
+| token   |  -   | `github.token`           | For use with a PAT                                    |
 
 **summary:** Will add result details to the job summary on the workflow run.
 
@@ -68,7 +69,7 @@ Coming Soon...
 
 </details>
 
-At a minimum, you need to checkout the repository.
+At a minimum, you need to checkout the repository. The workspace should also be somewhat "clean".
 The action will run a npm clean install if the `node_modules` directory is not present.
 
 ```yaml
@@ -150,9 +151,13 @@ More Output Examples Coming Soon...
 
 **heading:** You can customize the `heading` or set to an empty string to remove it.
 
-**toggle:** The `toggle` must be set to a non-empty string if changing this input.
+**open:** Set to `false` for sections to be closed (collapsed/not open) by default.
 
-**open:** Set results to be open by default (note the first example below is open).
+**ncu:** Set this to `false` to disable reporting the output of `npx npm-check-updates`.
+
+**update:** Set this to `false` to disable reporting the output of `npm update --dry-run`.
+
+**link:** Set this to `false` to use plain text for package names instead of hyperlinks.
 
 **columns:** Customize column visibility and order.
 This must be a perfectly formatted CSV with any combination of these keys:

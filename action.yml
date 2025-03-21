@@ -7,7 +7,7 @@ branding:
 
 inputs:
   columns:
-    description: "Column Order and Visibility"
+    description: "Customize Table Columns"
     required: false
     default: "n,c,w,l"
   latest:
@@ -15,7 +15,7 @@ inputs:
     required: false
     default: "true"
   heading:
-    description: "Update Heading Text"
+    description: "Comment Heading"
     required: false
     default: "### NPM Outdated Check"
   open:
