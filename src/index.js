@@ -48,13 +48,8 @@ const maps = {
             core.endGroup() // npm install
         }
 
-        const opts = { ignoreReturnCode: true }
         core.startGroup('Running: npm outdated')
-        const npmOutdated = await checkOutput(
-            'npm',
-            ['outdated', '--json'],
-            opts
-        )
+        const npmOutdated = await checkOutput('npm', ['outdated', '--json'])
         core.endGroup() // npm outdated
 
         core.startGroup('Outdated JSON')
@@ -62,9 +57,9 @@ const maps = {
         core.endGroup() // Outdated JSON
 
         /** @type {{current: string, wanted: string, latest: string, dependent: string, location: string}} **/
-        const data = JSON.parse(npmOutdated)
+        const outdated = JSON.parse(npmOutdated)
         core.startGroup('Outdated Object')
-        console.log(data)
+        console.log(outdated)
         core.endGroup() // Outdated Object
 
         core.startGroup('Running: npx npm-check-updates')
@@ -86,32 +81,32 @@ const maps = {
         core.endGroup() // npm update --dry-run
 
         core.startGroup('Generate Table')
-        const table = genTable(config, data)
+        const table = genTable(config, outdated)
         core.endGroup() // Generate Table
-        core.startGroup('Table Data')
+        core.startGroup('Table Outdated')
         console.log(table)
-        core.endGroup() // Table Data
+        core.endGroup() // Table Outdated
 
         const markdown = genMarkdown(config, table, ncu, update)
         core.startGroup('Markdown String')
         console.log(markdown)
         core.endGroup() // Markdown String
 
-        const updatePR =
-            Object.entries(data).length ||
-            (config.ncu && ncu) ||
-            (config.update && update)
+        const hasUpdates =
+            !!Object.entries(outdated).length ||
+            !!(config.ncu && ncu) ||
+            !!(config.update && update)
 
-        console.log('updatePR:', updatePR)
+        console.log('hasUpdates:', hasUpdates)
         console.log('comments:', github.context.payload.pull_request?.comments)
 
         let comment
         if (
             github.context.eventName === 'pull_request' &&
-            (github.context.payload.pull_request?.comments || updatePR)
+            (github.context.payload.pull_request?.comments || hasUpdates)
         ) {
             core.startGroup(`Processing PR: ${github.context.payload.number}`)
-            comment = await updatePull(config, data, markdown, updatePR)
+            comment = await updatePull(config, markdown, hasUpdates)
             console.log('Complete.')
             core.endGroup() // Processing PR
         } else {
@@ -120,7 +115,9 @@ const maps = {
 
         // Outputs
         core.info('📩 Setting Outputs')
-        core.setOutput('json', JSON.stringify(data))
+        core.setOutput('outdated', JSON.stringify(outdated))
+        core.setOutput('ncu', ncu)
+        core.setOutput('update', update)
         core.setOutput('markdown', markdown)
 
         // Summary
@@ -145,12 +142,11 @@ const maps = {
 /**
  * Update PR
  * @param {Config} config
- * @param {Object} data
  * @param {String} markdown
  * @param {Boolean} changes
  * @return {Promise<Object|undefined>}
  */
-async function updatePull(config, data, markdown, changes) {
+async function updatePull(config, markdown, changes) {
     if (!github.context.payload.pull_request?.number) {
         throw new Error('Unable to determine the Pull Request number!')
     }
@@ -206,6 +202,8 @@ async function updatePull(config, data, markdown, changes) {
  * @return {Promise<String>}
  */
 async function checkOutput(commandLine, args = [], options = {}) {
+    options = { ...{ ignoreReturnCode: true }, ...options }
+    // console.log('options:', options)
     let myOutput = ''
     let myError = ''
     options.listeners = {
@@ -234,6 +232,7 @@ function genMarkdown(config, data, ncu, update) {
     const open = config.open ? ' open' : ''
     let result = `${config.heading}\n\n`
 
+    result += `<details${open}><summary>npm outdated</summary>\n\n`
     if (data.length) {
         const [cols, align] = [[], []]
         config.columns.forEach((c) => cols.push(maps[c].col))
@@ -242,9 +241,9 @@ function genMarkdown(config, data, ncu, update) {
 
         const table = markdownTable([cols, ...data], { align })
         console.log('table:\n', table)
-        result += `<details${open}><summary>npm outdated</summary>\n\n${table}\n\n</details>\n\n`
+        result += `${table}\n\n</details>\n\n`
     } else {
-        result += '✅ All packages have been updated.\n\n'
+        result += '✅ All packages are up-to-date.\n\n</details>\n\n'
     }
 
     if (config.ncu && ncu) {

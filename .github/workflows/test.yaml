@@ -44,14 +44,18 @@ jobs:
 
       - name: "Verify Outputs"
         env:
-          JSON: ${{ steps.test.outputs.json }}
+          OUTDATED: ${{ steps.test.outputs.outdated }}
+          NCU: ${{ steps.test.outputs.ncu }}
+          UPDATE: ${{ steps.test.outputs.update }}
           MARKDOWN: ${{ steps.test.outputs.markdown }}
         run: |
-          echo "json: '${{ env.JSON }}'"
-          if [ -z '${{ env.JSON }}' ];then
-            echo "No Output: json"
+          echo "outdated: '${{ env.OUTDATED }}'"
+          if [ -z '${{ env.OUTDATED }}' ];then
+            echo "No Output: outdated"
             exit 1
           fi
+          echo "ncu: '${{ env.NCU }}'"
+          echo "update: '${{ env.UPDATE }}'"
           echo "markdown: '${{ env.MARKDOWN }}'"
           if [ -z '${{ env.MARKDOWN }}' ];then
             echo "No Output: markdown"

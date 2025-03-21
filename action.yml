@@ -44,10 +44,14 @@ inputs:
     default: ${{ github.token }}
 
 outputs:
-  json:
-    description: "Changes JSON Object"
+  outdated:
+    description: "Outdated JSON Object"
+  ncu:
+    description: "NPM Check Updates Output"
+  update:
+    description: "NPM Update Dry Run Output"
   markdown:
-    description: "Changes Markdown Table"
+    description: "Results Markdown Table"
 
 runs:
   using: "node20"

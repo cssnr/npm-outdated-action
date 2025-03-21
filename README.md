@@ -28,9 +28,11 @@
 - [Support](#Support)
 - [Contributing](#Contributing)
 
-Action to report npm outdated packages on a pull request and comment with a [customizable table](#Table-Options).
+Action to report npm outdated packages on a pull request and comment with a [customizable table](#Table-Options),
+including output of `npm-check-updates` and `npm update --dry-run`.
 
 This action will comment on a PR if packages are outdated. As packages are updated, the comment is updated.
+No comment is added on pulls when everything is up-to-date to reduce spam.
 
 You can customize the heading, column visibility, column order, and reporting on wanted or latest.
 
@@ -95,12 +97,14 @@ Permissions documentation for [Workflows](https://docs.github.com/en/actions/wri
 
 ## Outputs
 
-| Output   | Output&nbsp;Description |
-| :------- | :---------------------- |
-| json     | Chnages JSON Object     |
-| markdown | Changes Markdown Table  |
+| Output   | Empty | Output&nbsp;Description   |
+| :------- | :---: | :------------------------ |
+| outdated | `{}`  | Outdated JSON Object      |
+| ncu      |  ` `  | NPM Check Updates Output  |
+| update   |  ` `  | NPM Update Dry Run Output |
+| markdown |   -   | Results Markdown Table    |
 
-This outputs the changes `json` object and the `markdown` table.
+This outputs the `outdated` JSON object string, `ncu` output, `npm update` output, and the `markdown` table results.
 
 ```yaml
 - name: 'NPM Outdated Check'
@@ -109,10 +113,14 @@ This outputs the changes `json` object and the `markdown` table.
 
 - name: 'Echo Output'
   env:
-    JSON: ${{ steps.outdated.outputs.json }}
+    OUTDATED: ${{ steps.outdated.outputs.outdated }}
+    NCU: ${{ steps.outdated.outputs.ncu }}
+    UPDATE: ${{ steps.outdated.outputs.update }}
     MARKDOWN: ${{ steps.outdated.outputs.markdown }}
   run: |
-    echo "json: '${{ env.JSON }}'"
+    echo "outdated: '${{ env.OUTDATED }}'"
+    echo "ncu: '${{ env.NCU }}'"
+    echo "update: '${{ env.UPDATE }}'"
     echo "markdown: '${{ env.MARKDOWN }}'"
 ```
 
