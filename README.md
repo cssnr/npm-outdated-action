@@ -82,7 +82,7 @@ summary: true</code></pre>
 </details>
 
 At a minimum, you need to checkout the repository. The workspace should also be somewhat "clean".
-The action will run a npm clean install if the `node_modules` directory is not present.
+The action will run a npm clean-install (ci). If this fails it will report the errors.
 
 ```yaml
 - name: 'Checkout'
@@ -95,7 +95,11 @@ The action will run a npm clean install if the `node_modules` directory is not p
 
 Note: `continue-on-error: true` is used to prevent the workflow from failing if the action fails.
 
-You can view more [Examples](#Examples) below.
+If you want the job to fail, remove `continue-on-error` and set `fail: true`.
+
+See the [Comment Options](#Comment-Options) for more details on inputs.
+
+You can also view more [Examples](#Examples) below.
 
 ### Permissions
 
@@ -330,6 +334,16 @@ Note: this only appears if a previous comment is edited and does not show up on 
 ```
 
 This puts latest before current and adds dependent.
+
+</details>
+<details><summary>Fail Status Check if Outdated</summary>
+
+```yaml
+- name: 'Package Changelog Action'
+  uses: cssnr/npm-outdated-action@master
+  with:
+    fail: true
+```
 
 </details>
 <details open><summary>Custom Column Order</summary>
