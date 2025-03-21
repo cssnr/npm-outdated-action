@@ -229,7 +229,7 @@ changed 6 packages in 4s
 ---
 
 </details>
-<details open><summary>🔷 After Everything is Updated</summary>
+<details><summary>🔷 After Everything is Updated</summary>
 
 ---
 
