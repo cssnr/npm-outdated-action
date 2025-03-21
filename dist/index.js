@@ -32426,10 +32426,12 @@ const maps = {
         core.startGroup('Running: npm update --dry-run')
         const npmUpdate = await checkOutput('npm', ['update', '--dry-run'])
         const update = !npmUpdate.trim().startsWith('up to date')
-            ? npmUpdate
+            ? npmUpdate.substring(0, npmUpdate.lastIndexOf(' in'))
             : ''
         console.log('-----------')
         console.log(update)
+        console.log('-----------')
+        console.log(JSON.stringify(update))
         console.log('-----------')
         core.endGroup() // npm update --dry-run
 
@@ -32440,19 +32442,18 @@ const maps = {
         console.log(table)
         core.endGroup() // Table Outdated
 
-        const markdown = genMarkdown(config, table, ncu, update)
-        core.startGroup('Markdown String')
-        console.log(markdown)
-        core.endGroup() // Markdown String
-
         const hasUpdates =
             !!Object.entries(outdated).length ||
             !!(config.ncu && ncu) ||
             !!(config.update && update)
-
         console.log('hasUpdates:', hasUpdates)
-        console.log('comments:', github.context.payload.pull_request?.comments)
 
+        const markdown = genMarkdown(config, hasUpdates, table, ncu, update)
+        core.startGroup('Markdown String')
+        console.log(markdown)
+        core.endGroup() // Markdown String
+
+        console.log('comments:', github.context.payload.pull_request?.comments)
         let comment
         if (
             github.context.eventName === 'pull_request' &&
@@ -32576,16 +32577,20 @@ async function checkOutput(commandLine, args = [], options = {}) {
 /**
  * Generate Markdown
  * @param {Config} config
+ * @param {Boolean} changes
  * @param {Array[]} data
  * @param {String} ncu
  * @param {String} update
  * @return {String}
  */
-function genMarkdown(config, data, ncu, update) {
+function genMarkdown(config, changes, data, ncu, update) {
     const open = config.open ? ' open' : ''
     let result = `${config.heading}\n\n`
 
-    result += `<details${open}><summary>npm outdated</summary>\n\n`
+    if (!changes) {
+        result += '✅ All packages are up-to-date.\n\n'
+    }
+
     if (data.length) {
         const [cols, align] = [[], []]
         config.columns.forEach((c) => cols.push(maps[c].col))
@@ -32594,9 +32599,7 @@ function genMarkdown(config, data, ncu, update) {
 
         const table = markdownTable([cols, ...data], { align })
         console.log('table:\n', table)
-        result += `${table}\n\n</details>\n\n`
-    } else {
-        result += '✅ All packages are up-to-date.\n\n</details>\n\n'
+        result += `<details${open}><summary>npm outdated</summary>\n\n${table}\n\n</details>\n\n`
     }
 
     if (config.ncu && ncu) {

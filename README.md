@@ -19,8 +19,8 @@
 - [Inputs](#Inputs)
   - [Permissions](#Permissions)
 - [Outputs](#Outputs)
-- [Table Options](#Table-Options)
-  - [Table Examples](#Table-Examples)
+- [Comment Options](#Comment-Options)
+- [Comment Examples](#Comment-Examples)
 - [Examples](#Examples)
 - [Tags](#Tags)
 - [Features](#Features)
@@ -28,15 +28,14 @@
 - [Support](#Support)
 - [Contributing](#Contributing)
 
-Action to report npm outdated packages on a pull request and comment with a [customizable table](#Table-Options),
-including output of `npm-check-updates` and `npm update --dry-run`.
+Action to report `npm outdated` packages on a pull request and add a [customizable comment](#Comment-Options),
+also includes output of `npm-check-updates` and `npm update --dry-run`.
 
 This action will comment on a PR if packages are outdated. As packages are updated, the comment is updated.
 No comment is added on pulls when everything is up-to-date to reduce spam.
 
 You can customize the heading, column visibility, column order, and reporting on wanted or latest.
-
-Check out the [Table Examples](#Table-Examples) to see more.
+Check out the [Comment Examples](#Comment-Examples) to see more.
 
 > [!NOTE]  
 > This action is under active development.  
@@ -45,16 +44,17 @@ Check out the [Table Examples](#Table-Examples) to see more.
 
 ## Inputs
 
-| Input   | Req. | Default&nbsp;Value    | Input&nbsp;Description                                |
-| :------ | :--: | :-------------------- | :---------------------------------------------------- |
-| columns |  -   | `n,c,w,l`             | Customize Table Columns [⤵️](#Table-Options)          |
-| latest  |  -   | `true`                | Report if Latest > Wanted [⤵️](#Table-Options)        |
-| heading |  -   | `### Package Changes` | Release Notes Heading [⤵️](#Table-Options)            |
-| open    |  -   | `true`                | Details Open by Default [⤵️](#Table-Options)          |
-| ncu     |  -   | `true`                | Show npm-check-updates Output [⤵️](#Table-Options)    |
-| update  |  -   | `true`                | Show npm update --dry-run Output [⤵️](#Table-Options) |
-| summary |  -   | `true`                | Add Workflow Job Summary \*                           |
-| token   |  -   | `github.token`        | For use with a PAT                                    |
+| Input   | Req. | Default&nbsp;Value       | Input&nbsp;Description                                  |
+| :------ | :--: | :----------------------- | :------------------------------------------------------ |
+| columns |  -   | `n,c,w,l`                | Customize Table Columns [⤵️](#Comment-Options)          |
+| latest  |  -   | `true`                   | Report if Latest > Wanted [⤵️](#Comment-Options)        |
+| heading |  -   | `### NPM Outdated Check` | Comment Heading [⤵️](#Comment-Options)                  |
+| open    |  -   | `true`                   | Details Open by Default [⤵️](#Comment-Options)          |
+| ncu     |  -   | `true`                   | Show npm-check-updates Output [⤵️](#Comment-Options)    |
+| update  |  -   | `true`                   | Show npm update --dry-run Output [⤵️](#Comment-Options) |
+| link    |  -   | `true`                   | Use Hyperlink for Names [⤵️](#Comment-Options)          |
+| summary |  -   | `true`                   | Add Workflow Job Summary \*                             |
+| token   |  -   | `github.token`           | For use with a PAT                                      |
 
 **summary:** Will add result details to the job summary on the workflow run.
 
@@ -62,13 +62,25 @@ Check out the [Table Examples](#Table-Examples) to see more.
 
 ---
 
-Coming Soon...
+PR Comment: [#4](https://github.com/cssnr/npm-outdated-action/pull/4#issuecomment-2742441847)
+
+_PR Comment will Appear Here_
+
+<details><summary>Config</summary><pre lang="yaml"><code>columns: ["n","c","w","l"]
+latest: true
+heading: "### NPM Outdated Check"
+open: true
+ncu: true
+update: true
+link: true
+summary: true</code></pre>
+</details>
 
 ---
 
 </details>
 
-At a minimum, you need to checkout the repository.
+At a minimum, you need to checkout the repository. The workspace should also be somewhat "clean".
 The action will run a npm clean install if the `node_modules` directory is not present.
 
 ```yaml
@@ -102,9 +114,9 @@ Permissions documentation for [Workflows](https://docs.github.com/en/actions/wri
 | outdated | `{}`  | Outdated JSON Object      |
 | ncu      |  ` `  | NPM Check Updates Output  |
 | update   |  ` `  | NPM Update Dry Run Output |
-| markdown |   -   | Results Markdown Table    |
+| markdown |   -   | Results Markdown Output   |
 
-This outputs the `outdated` JSON object string, `ncu` output, `npm update` output, and the `markdown` table results.
+This outputs the `outdated` JSON object string, `ncu` output, `npm update` output, and the `markdown` results.
 
 ```yaml
 - name: 'NPM Outdated Check'
@@ -144,17 +156,21 @@ Note: due to the way `${{}}` expressions are evaluated, multi-line output gets e
 
 More Output Examples Coming Soon...
 
-## Table Options
+## Comment Options
 
 **latest:** To disable reporting of latest and ONLY show wanted, set this to `false`.
 
 **heading:** You can customize the `heading` or set to an empty string to remove it.
 
-**toggle:** The `toggle` must be set to a non-empty string if changing this input.
+**open:** Set to `false` for sections to be closed (collapsed/not open) by default.
 
-**open:** Set results to be open by default (note the first example below is open).
+**ncu:** Set this to `false` to disable reporting the output of `npx npm-check-updates`.
 
-**columns:** Customize column visibility and order.
+**update:** Set this to `false` to disable reporting the output of `npm update --dry-run`.
+
+**link:** Set this to `false` to use plain text for package names instead of hyperlinks.
+
+**columns:** Customize column visibility and order.  
 This must be a perfectly formatted CSV with any combination of these keys:
 
 Default value: `n,c,w,l`
@@ -183,27 +199,107 @@ const maps = {
 
 </details>
 
-### Table Examples
+## Comment Examples
 
-<details open><summary>🔷 View Basic Example</summary>
+_Note: the examples are generated with no heading and default options._
+
+<details open><summary>🔷 Full Example Closed</summary>
 
 ---
 
-<details open><summary>Click to Toggle Packages</summary>
+<!-- npm-outdated-action 68d31bb9e0cb9283e3c6302dd252b976db6b179aa691a498a147f5de79fac6ec -->
+
+<details><summary>npm outdated</summary>
 
 | Package&nbsp;Name                            | Current | Wanted | Latest |
 | :------------------------------------------- | :-----: | :----: | :----: |
 | [axios](https://www.npmjs.com/package/axios) |  1.8.3  | 1.8.4  |   -    |
 
 </details>
+<details><summary>npm-check-updates</summary>
 
-Update packages with: `npm update --save`
+```text
+ @eslint/js  ^9.20.0  →  ^9.22.0
+ axios        ^1.8.3  →   ^1.8.4
+```
+
+</details>
+<details><summary>npm update --dry-run</summary>
+
+```text
+change undici 5.28.5 => 5.29.0
+change axios 1.8.3 => 1.8.4
+change @pkgr/core 0.1.1 => 0.1.2
+change @octokit/types 13.8.0 => 13.10.0
+change @octokit/openapi-types 23.0.1 => 24.2.0
+change @octokit/core 5.2.0 => 5.2.1
+
+changed 6 packages in 4s
+
+32 packages are looking for funding
+  run `npm fund` for details
+```
+
+</details>
 
 ---
 
 </details>
+<details><summary>🔷 Full Example Open</summary>
 
-More Table Examples Coming Soon...
+---
+
+<!-- npm-outdated-action 68d31bb9e0cb9283e3c6302dd252b976db6b179aa691a498a147f5de79fac6ec -->
+
+<details open><summary>npm outdated</summary>
+
+| Package&nbsp;Name                            | Current | Wanted | Latest |
+| :------------------------------------------- | :-----: | :----: | :----: |
+| [axios](https://www.npmjs.com/package/axios) |  1.8.3  | 1.8.4  |   -    |
+
+</details>
+<details open><summary>npm-check-updates</summary>
+
+```text
+ @eslint/js  ^9.20.0  →  ^9.22.0
+ axios        ^1.8.3  →   ^1.8.4
+```
+
+</details>
+<details open><summary>npm update --dry-run</summary>
+
+```text
+change undici 5.28.5 => 5.29.0
+change axios 1.8.3 => 1.8.4
+change @pkgr/core 0.1.1 => 0.1.2
+change @octokit/types 13.8.0 => 13.10.0
+change @octokit/openapi-types 23.0.1 => 24.2.0
+change @octokit/core 5.2.0 => 5.2.1
+
+changed 6 packages in 4s
+
+32 packages are looking for funding
+  run `npm fund` for details
+```
+
+</details>
+
+---
+
+</details>
+<details><summary>🔷 After Updated</summary>
+
+---
+
+✅ All packages are up-to-date.
+
+---
+
+Note: this only appears if a previous comment is edited and does not show up on a new PR with no outdated packages.
+
+</details>
+
+More Comment Examples Coming Soon...
 
 ## Examples
 
@@ -220,6 +316,19 @@ More Table Examples Coming Soon...
 ```
 
 </details>
+<details><summary>Remove Heading</summary>
+
+```yaml
+- name: 'Package Changelog Action'
+  uses: cssnr/npm-outdated-action@master
+  continue-on-error: true
+  with:
+    heading: ''
+```
+
+This puts latest before current and adds dependent.
+
+</details>
 <details open><summary>Custom Column Order</summary>
 
 ```yaml
@@ -228,6 +337,32 @@ More Table Examples Coming Soon...
   continue-on-error: true
   with:
     columns: 'n,l,c,w,d'
+```
+
+This puts latest before current and adds dependent.
+
+</details>
+<details><summary>Disable NCU Check</summary>
+
+```yaml
+- name: 'Package Changelog Action'
+  uses: cssnr/npm-outdated-action@master
+  continue-on-error: true
+  with:
+    ncu: false
+```
+
+This puts latest before current and adds dependent.
+
+</details>
+<details><summary>Disable Update Check</summary>
+
+```yaml
+- name: 'Package Changelog Action'
+  uses: cssnr/npm-outdated-action@master
+  continue-on-error: true
+  with:
+    update: false
 ```
 
 This puts latest before current and adds dependent.
@@ -246,22 +381,24 @@ The following rolling [tags](https://github.com/cssnr/npm-outdated-action/tags) 
 | [![GitHub Tag Minor](https://img.shields.io/github/v/tag/cssnr/npm-outdated-action?sort=semver&filter=!v*.*.*&style=for-the-badge&label=%20&color=blue)](https://github.com/cssnr/npm-outdated-action/releases/latest) |   ✅    |  ✅  |  ❌   | **Minor** | `vN.N.x` | `vN.N`   |
 | [![GitHub Release](https://img.shields.io/github/v/release/cssnr/npm-outdated-action?style=for-the-badge&label=%20&color=red)](https://github.com/cssnr/npm-outdated-action/releases/latest)                           |   ❌    |  ❌  |  ❌   | **Micro** | `vN.N.N` | `vN.N.N` |
 
-You can view the release notes for each version on the [releases](https://github.com/cssnr/cloudflare-purge-cache-action/releases) page.
+You can view the release notes for each version on the [releases](https://github.com/cssnr/npm-outdated-action/releases) page.
 
 The **Major** tag is recommended. It is the most up-to-date and always backwards compatible.
 Breaking changes would result in a **Major** version bump. At a minimum you should use a **Minor** tag.
 
 ## Features
 
-- Automatically report npm outdated packages on a PR with a Markdown table.
+- Automatically report npm outdated packages on a PR and add a comment.
 - Report wanted and latest with option to only report wanted.
 - Option to customize columns visibility and columns order.
 - Option to display results expanded or collapsed.
-- Outputs changes in JSON and markdown.
+- Option to display `npx npm-check-updates` output.
+- Option to display `npm update --dry-run` output.
+- Outputs outdated, ncu, update, and markdown results.
 
 ### Planned
 
-- Option to Fail Job
+- Option to Fail Job if Outdated
 - Packages Exclude List
 - Custom Column Alignment
 - Custom Column Titles
