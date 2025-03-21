@@ -53,6 +53,7 @@ Check out the [Comment Examples](#Comment-Examples) to see more.
 | ncu     |  -   | `true`                   | Show npm-check-updates Output [⤵️](#Comment-Options)    |
 | update  |  -   | `true`                   | Show npm update --dry-run Output [⤵️](#Comment-Options) |
 | link    |  -   | `true`                   | Use Hyperlink for Names [⤵️](#Comment-Options)          |
+| fail    |  -   | `false`                  | Fail Job if Updates are Found [⤵️](#Comment-Options)    |
 | summary |  -   | `true`                   | Add Workflow Job Summary \*                             |
 | token   |  -   | `github.token`           | For use with a PAT                                      |
 
@@ -169,6 +170,8 @@ Note: due to the way `${{}}` expressions are evaluated, multi-line output gets e
 **update:** Set this to `false` to disable reporting the output of `npm update --dry-run`.
 
 **link:** Set this to `false` to use plain text for package names instead of hyperlinks.
+
+**fail:** Set this to `true` to fail if updates are found to enforce this through status checks.
 
 **columns:** Customize column visibility and order.  
 This must be a perfectly formatted CSV with any combination of these keys:

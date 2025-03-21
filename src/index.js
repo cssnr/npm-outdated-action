@@ -132,7 +132,12 @@ const maps = {
             }
         }
 
-        core.info(`✅ \u001b[32;1mFinished Success`)
+        if (config.fail && hasUpdates) {
+            core.info(`⛔ \u001b[31;1mUpdates Found`)
+            core.setFailed('Updates found and fail is set to true.')
+        } else {
+            core.info(`✅ \u001b[32;1mFinished Success`)
+        }
     } catch (e) {
         core.debug(e)
         core.info(e.message)
@@ -340,6 +345,7 @@ async function addSummary(config, markdown, comment) {
  * @property {Boolean} open
  * @property {Boolean} ncu
  * @property {Boolean} update
+ * @property {Boolean} fail
  * @property {Boolean} link
  * @property {String} token
  * @return {Config}
@@ -353,6 +359,7 @@ function getConfig() {
         ncu: core.getBooleanInput('ncu'),
         update: core.getBooleanInput('update'),
         link: core.getBooleanInput('link'),
+        fail: core.getBooleanInput('fail'),
         summary: core.getBooleanInput('summary'),
         token: core.getInput('token', { required: true }),
     }

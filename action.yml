@@ -34,6 +34,10 @@ inputs:
     description: "Use Link for Names"
     required: false
     default: "true"
+  fail:
+    description: "Fail Job if Updates are Found"
+    required: false
+    default: "false"
   summary:
     description: "Add Summary to Job"
     required: false
