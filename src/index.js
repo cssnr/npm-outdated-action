@@ -235,7 +235,7 @@ function genMarkdown(config, changes, data, ncu, update) {
     let result = `${config.heading}\n\n`
 
     if (!changes) {
-        result += '✅ All packages are up-to-date.\n\n</details>\n\n'
+        result += '✅ All packages are up-to-date.\n\n'
     }
 
     if (data.length) {

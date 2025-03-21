@@ -62,7 +62,23 @@ Check out the [Comment Examples](#Comment-Examples) to see more.
 
 ---
 
-Coming Soon...
+PR Comment: [#4](https://github.com/cssnr/npm-outdated-action/pull/4#issuecomment-2742441847)
+
+---
+
+_Comment Update will Appear Here_
+
+---
+
+<details><summary>Config</summary><pre lang="yaml"><code>columns: ["n","c","w","l"]
+latest: true
+heading: "### NPM Outdated Check"
+open: true
+ncu: true
+update: true
+link: true
+summary: true</code></pre>
+</details>
 
 ---
 
