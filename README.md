@@ -19,8 +19,8 @@
 - [Inputs](#Inputs)
   - [Permissions](#Permissions)
 - [Outputs](#Outputs)
-- [Table Options](#Table-Options)
-  - [Table Examples](#Table-Examples)
+- [Comment Options](#Comment-Options)
+  - [Comment Examples](#Comment-Examples)
 - [Examples](#Examples)
 - [Tags](#Tags)
 - [Features](#Features)
@@ -28,7 +28,7 @@
 - [Support](#Support)
 - [Contributing](#Contributing)
 
-Action to report npm outdated packages on a pull request and comment with a [customizable table](#Table-Options),
+Action to report npm outdated packages on a pull request and add a [customizable comment](#Comment-Options),
 including output of `npm-check-updates` and `npm update --dry-run`.
 
 This action will comment on a PR if packages are outdated. As packages are updated, the comment is updated.
@@ -36,7 +36,7 @@ No comment is added on pulls when everything is up-to-date to reduce spam.
 
 You can customize the heading, column visibility, column order, and reporting on wanted or latest.
 
-Check out the [Table Examples](#Table-Examples) to see more.
+Check out the [Comment Examples](#Comment-Examples) to see more.
 
 > [!NOTE]  
 > This action is under active development.  
@@ -45,17 +45,17 @@ Check out the [Table Examples](#Table-Examples) to see more.
 
 ## Inputs
 
-| Input   | Req. | Default&nbsp;Value       | Input&nbsp;Description                                |
-| :------ | :--: | :----------------------- | :---------------------------------------------------- |
-| columns |  -   | `n,c,w,l`                | Customize Table Columns [⤵️](#Table-Options)          |
-| latest  |  -   | `true`                   | Report if Latest > Wanted [⤵️](#Table-Options)        |
-| heading |  -   | `### NPM Outdated Check` | Comment Heading [⤵️](#Table-Options)                  |
-| open    |  -   | `true`                   | Details Open by Default [⤵️](#Table-Options)          |
-| ncu     |  -   | `true`                   | Show npm-check-updates Output [⤵️](#Table-Options)    |
-| update  |  -   | `true`                   | Show npm update --dry-run Output [⤵️](#Table-Options) |
-| link    |  -   | `true`                   | Use Hyperlink for Names [⤵️](#Table-Options)          |
-| summary |  -   | `true`                   | Add Workflow Job Summary \*                           |
-| token   |  -   | `github.token`           | For use with a PAT                                    |
+| Input   | Req. | Default&nbsp;Value       | Input&nbsp;Description                                  |
+| :------ | :--: | :----------------------- | :------------------------------------------------------ |
+| columns |  -   | `n,c,w,l`                | Customize Table Columns [⤵️](#Comment-Options)          |
+| latest  |  -   | `true`                   | Report if Latest > Wanted [⤵️](#Comment-Options)        |
+| heading |  -   | `### NPM Outdated Check` | Comment Heading [⤵️](#Comment-Options)                  |
+| open    |  -   | `true`                   | Details Open by Default [⤵️](#Comment-Options)          |
+| ncu     |  -   | `true`                   | Show npm-check-updates Output [⤵️](#Comment-Options)    |
+| update  |  -   | `true`                   | Show npm update --dry-run Output [⤵️](#Comment-Options) |
+| link    |  -   | `true`                   | Use Hyperlink for Names [⤵️](#Comment-Options)          |
+| summary |  -   | `true`                   | Add Workflow Job Summary \*                             |
+| token   |  -   | `github.token`           | For use with a PAT                                      |
 
 **summary:** Will add result details to the job summary on the workflow run.
 
@@ -103,9 +103,9 @@ Permissions documentation for [Workflows](https://docs.github.com/en/actions/wri
 | outdated | `{}`  | Outdated JSON Object      |
 | ncu      |  ` `  | NPM Check Updates Output  |
 | update   |  ` `  | NPM Update Dry Run Output |
-| markdown |   -   | Results Markdown Table    |
+| markdown |   -   | Results Markdown Output   |
 
-This outputs the `outdated` JSON object string, `ncu` output, `npm update` output, and the `markdown` table results.
+This outputs the `outdated` JSON object string, `ncu` output, `npm update` output, and the `markdown` results.
 
 ```yaml
 - name: 'NPM Outdated Check'
@@ -145,7 +145,7 @@ Note: due to the way `${{}}` expressions are evaluated, multi-line output gets e
 
 More Output Examples Coming Soon...
 
-## Table Options
+## Comment Options
 
 **latest:** To disable reporting of latest and ONLY show wanted, set this to `false`.
 
@@ -188,7 +188,7 @@ const maps = {
 
 </details>
 
-### Table Examples
+### Comment Examples
 
 <details open><summary>🔷 View Full Example</summary>
 
@@ -246,7 +246,7 @@ Note: this only appears if a previous comment is edited and does not show up on 
 
 </details>
 
-More Table Examples Coming Soon...
+More Comment Examples Coming Soon...
 
 ## Examples
 
@@ -296,15 +296,17 @@ Breaking changes would result in a **Major** version bump. At a minimum you shou
 
 ## Features
 
-- Automatically report npm outdated packages on a PR with a Markdown table.
+- Automatically report npm outdated packages on a PR and add a comment.
 - Report wanted and latest with option to only report wanted.
 - Option to customize columns visibility and columns order.
 - Option to display results expanded or collapsed.
-- Outputs changes in JSON and markdown.
+- Option to display `npx npm-check-updates` output.
+- Option to display `npm update --dry-run` output.
+- Outputs outdated, ncu, update, and markdown results.
 
 ### Planned
 
-- Option to Fail Job
+- Option to Fail Job if Outdated
 - Packages Exclude List
 - Custom Column Alignment
 - Custom Column Titles
