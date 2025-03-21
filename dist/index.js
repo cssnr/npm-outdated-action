@@ -32351,7 +32351,6 @@ function toAlignment(value) {
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-const fs = __nccwpck_require__(9896)
 const core = __nccwpck_require__(7484)
 const exec = __nccwpck_require__(5236)
 const github = __nccwpck_require__(3228)
@@ -32388,37 +32387,13 @@ const maps = {
         console.log(config)
         core.endGroup() // Config
 
-        // try {
-        //     await exec.exec('npm', ['ls'])
-        //     console.log('NPM Install Already Run, skipping...')
-        // } catch (e) {
-        //     console.log('Running NPM Install...')
-        //     await exec.exec('npm', ['i'])
-        // }
-
-        // let ci, cie
-
-        // let results
-        // try {
-        //     // if (!fs.existsSync('node_modules')) {
-        //     core.startGroup('Running: npm ci')
-        //     // await exec.exec('npm', ['ci'])
-        //     // [ci, cie] = await checkOutput('npm', ['ci'])
-        //     results = await checkOutput('npm', ['ci'])
-        //     console.log('results:', results)
-        //     core.endGroup() // npm install
-        //     // }
-        // } catch (e) {
-        //     console.log('e:', e)
-        //     console.log('results:', results)
-        //     core.endGroup() // npm install
-        // }
-
+        core.startGroup('Running: npm ci')
         const results = await checkOutput('npm', ['ci'], true)
         const ci = results.length > 1 ? results[1] : ''
         console.log('-----------')
-        console.log('ci:', ci)
-        // return
+        console.log(ci)
+        console.log('-----------')
+        core.endGroup() // npm install
 
         let outdated = ''
         if (!ci) {
