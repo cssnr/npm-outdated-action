@@ -32612,8 +32612,8 @@ function genMarkdown(config, changes, ci, data, ncu, update) {
         result += '✅ All packages are up-to-date.\n\n'
     }
     if (ci) {
-        result += `⛔ Error running install: \`npm ci\`\n\n`
-        result += `\`\`\`text\n${ci}\n\`\`\`\n\n`
+        result += `⛔ Error running npm clean-install.\n\n`
+        result += `<details${open}><summary>npm ci</summary>\n\n\`\`\`text\n${ci}\n\`\`\`\n\n</details>\n\n`
     }
 
     if (data.length) {
