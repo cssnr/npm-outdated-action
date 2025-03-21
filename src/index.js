@@ -97,12 +97,14 @@ const maps = {
         console.log(markdown)
         core.endGroup() // Markdown String
 
+        const updatePR =
+            Object.entries(data).length ||
+            (config.ncu && ncu) ||
+            (config.update && update) ||
+            github.context.payload.pull_request?.comments
+
         let comment
-        if (
-            github.context.eventName === 'pull_request' &&
-            (github.context.payload.pull_request?.comments ||
-                Object.entries(data).length)
-        ) {
+        if (github.context.eventName === 'pull_request' && updatePR) {
             core.startGroup(`Processing PR: ${github.context.payload.number}`)
             comment = await updatePull(config, data, markdown)
             console.log('Complete.')
