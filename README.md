@@ -304,6 +304,19 @@ More Comment Examples Coming Soon...
 ```
 
 </details>
+<details><summary>Remove Heading</summary>
+
+```yaml
+- name: 'Package Changelog Action'
+  uses: cssnr/npm-outdated-action@master
+  continue-on-error: true
+  with:
+    heading: ''
+```
+
+This puts latest before current and adds dependent.
+
+</details>
 <details open><summary>Custom Column Order</summary>
 
 ```yaml
@@ -312,6 +325,32 @@ More Comment Examples Coming Soon...
   continue-on-error: true
   with:
     columns: 'n,l,c,w,d'
+```
+
+This puts latest before current and adds dependent.
+
+</details>
+<details><summary>Disable NCU Check</summary>
+
+```yaml
+- name: 'Package Changelog Action'
+  uses: cssnr/npm-outdated-action@master
+  continue-on-error: true
+  with:
+    ncu: false
+```
+
+This puts latest before current and adds dependent.
+
+</details>
+<details><summary>Disable Update Check</summary>
+
+```yaml
+- name: 'Package Changelog Action'
+  uses: cssnr/npm-outdated-action@master
+  continue-on-error: true
+  with:
+    update: false
 ```
 
 This puts latest before current and adds dependent.
