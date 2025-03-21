@@ -189,7 +189,7 @@ const maps = {
 
 ## Comment Examples
 
-Note: the examples are generated with no heading and default options.
+_Note: the examples are generated with no heading and default options._
 
 <details open><summary>🔷 Full Example Closed</summary>
 
