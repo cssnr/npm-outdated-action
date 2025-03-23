@@ -36,7 +36,7 @@ jobs:
         uses: ./
         with:
           fail: false
-          exclude: "@eslint/js"
+          #exclude: "@eslint/js"
 
       - name: "Verify Outputs"
         if: ${{ !github.event.act }}

@@ -176,7 +176,7 @@ Note: due to the way `${{}}` expressions are evaluated, multi-line output gets e
 
 **link:** Set this to `false` to use plain text for package names instead of hyperlinks.
 
-**exclude:** Packages to ignore/omit when running checks, example `tsparticles`
+**exclude:** Packages to ignore/omit when running checks; example `@eslint/js,tsparticles`.
 
 **fail:** Set this to `true` to fail if updates are found to enforce this through status checks.
 
@@ -476,6 +476,7 @@ Breaking changes would result in a **Major** version bump. At a minimum you shou
 
 - Automatically report npm outdated packages on a PR and add a comment.
 - Report wanted and latest with option to only report wanted.
+- Option to exclude packages by name from being reported.
 - Option to customize columns visibility and columns order.
 - Option to display results expanded or collapsed.
 - Option to display `npx npm-check-updates` output.
@@ -484,7 +485,6 @@ Breaking changes would result in a **Major** version bump. At a minimum you shou
 
 ### Planned
 
-- Packages Exclude List
 - Custom Column Alignment
 - Custom Column Titles
 - Custom Section Text
