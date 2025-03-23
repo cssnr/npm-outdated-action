@@ -26,6 +26,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: "Debug event.json"
+        if: ${{ !github.event.act }}
         continue-on-error: true
         run: |
           cat "${GITHUB_EVENT_PATH}"
@@ -33,10 +34,11 @@ jobs:
       - name: "Test Local Action"
         id: test
         uses: ./
-        #with:
-        #  fail: true
+        with:
+          fail: false
 
       - name: "Verify Outputs"
+        if: ${{ !github.event.act }}
         env:
           OUTDATED: ${{ steps.test.outputs.outdated }}
           NCU: ${{ steps.test.outputs.ncu }}
