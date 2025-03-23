@@ -53,6 +53,7 @@ Check out the [Comment Examples](#Comment-Examples) to see more.
 | ncu     |  -   | `true`                   | Show npm-check-updates Output [⤵️](#Comment-Options)    |
 | update  |  -   | `true`                   | Show npm update --dry-run Output [⤵️](#Comment-Options) |
 | link    |  -   | `true`                   | Use Hyperlink for Names [⤵️](#Comment-Options)          |
+| exclude |  -   | -                        | CSV of Package Names to Exclude [⤵️](#Comment-Options)  |
 | fail    |  -   | `false`                  | Fail Job if Updates are Found [⤵️](#Comment-Options)    |
 | summary |  -   | `true`                   | Add Workflow Job Summary \*                             |
 | token   |  -   | `github.token`           | For use with a PAT                                      |
@@ -174,6 +175,8 @@ Note: due to the way `${{}}` expressions are evaluated, multi-line output gets e
 **update:** Set this to `false` to disable reporting the output of `npm update --dry-run`.
 
 **link:** Set this to `false` to use plain text for package names instead of hyperlinks.
+
+**exclude:** Packages to ignore/omit when running checks; example `@eslint/js,tsparticles`.
 
 **fail:** Set this to `true` to fail if updates are found to enforce this through status checks.
 
@@ -473,6 +476,7 @@ Breaking changes would result in a **Major** version bump. At a minimum you shou
 
 - Automatically report npm outdated packages on a PR and add a comment.
 - Report wanted and latest with option to only report wanted.
+- Option to exclude packages by name from being reported.
 - Option to customize columns visibility and columns order.
 - Option to display results expanded or collapsed.
 - Option to display `npx npm-check-updates` output.
@@ -481,13 +485,12 @@ Breaking changes would result in a **Major** version bump. At a minimum you shou
 
 ### Planned
 
-- Packages Exclude List
 - Custom Column Alignment
 - Custom Column Titles
 - Custom Section Text
 
-Want to show package changes on release notes? Check out: [cssnr/package-changelog-action](https://github.com/cssnr/package-changelog-action)  
-Want to automatically updated tags on release? Check out: [cssnr/update-version-tags-action](https://github.com/cssnr/update-version-tags-action)
+Want to show package changes on release notes? Check out: [cssnr/package-changelog-action](https://github.com/cssnr/package-changelog-action?tab=readme-ov-file#readme)  
+Want to automatically updated tags on release? Check out: [cssnr/update-version-tags-action](https://github.com/cssnr/update-version-tags-action?tab=readme-ov-file#readme)
 
 If you would like to see a new feature, please [submit a feature request](https://github.com/cssnr/npm-outdated-action/discussions/categories/feature-requests).
 
