@@ -54,13 +54,17 @@ const maps = {
 
             /** @type {{current: string, wanted: string, latest: string, dependent: string, location: string}} **/
             outdated = JSON.parse(npmOutdated)
+            for (const name of config.exclude) {
+                console.log('deleting excluded:', name)
+                delete outdated[name]
+            }
             core.startGroup('Outdated Object')
             console.log(outdated)
             core.endGroup() // Outdated Object
         }
 
         let ncu = ''
-        if (!ci) {
+        if (!ci && config.ncu) {
             core.startGroup('Running: npx npm-check-updates')
             const npxNcu = await checkOutput('npx', ['npm-check-updates'])
             ncu = npxNcu.split('\n').slice(2, -2).join('\n')
@@ -71,7 +75,7 @@ const maps = {
         }
 
         let update = ''
-        if (!ci) {
+        if (!ci && config.update) {
             core.startGroup('Running: npm update --dry-run')
             const npmUpdate = await checkOutput('npm', ['update', '--dry-run'])
             update = !npmUpdate.trim().startsWith('up to date')
@@ -365,6 +369,7 @@ async function addSummary(config, markdown, comment) {
  * @property {Boolean} open
  * @property {Boolean} ncu
  * @property {Boolean} update
+ * @property {String[]} exclude
  * @property {Boolean} fail
  * @property {Boolean} link
  * @property {String} token
@@ -379,6 +384,7 @@ function getConfig() {
         ncu: core.getBooleanInput('ncu'),
         update: core.getBooleanInput('update'),
         link: core.getBooleanInput('link'),
+        exclude: core.getInput('exclude').split(','),
         fail: core.getBooleanInput('fail'),
         summary: core.getBooleanInput('summary'),
         token: core.getInput('token', { required: true }),

@@ -34,6 +34,9 @@ inputs:
     description: "Use Link for Names"
     required: false
     default: "true"
+  exclude:
+    description: "CSV of Package Names to Exclude"
+    required: false
   fail:
     description: "Fail Job if Updates are Found"
     required: false
