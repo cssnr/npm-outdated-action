@@ -55,8 +55,10 @@ const maps = {
             /** @type {{current: string, wanted: string, latest: string, dependent: string, location: string}} **/
             outdated = JSON.parse(npmOutdated)
             for (const name of config.exclude) {
-                console.log('deleting exclude:', name)
-                delete outdated[name]
+                if (name in outdated) {
+                    console.log('Excluding:', name)
+                    delete outdated[name]
+                }
             }
             core.startGroup('Outdated Object')
             console.log(outdated)
@@ -68,7 +70,7 @@ const maps = {
             core.startGroup('Running: npx npm-check-updates')
             const args = ['npm-check-updates']
             for (const name of config.exclude) {
-                console.log('filtering exclude:', name)
+                console.log('Excluding:', name)
                 args.push('--reject', name)
             }
             console.log('args:', args)
@@ -100,24 +102,16 @@ const maps = {
             const filtered = []
             for (const result of results) {
                 const name = result.split(' ')[1]
-                console.log('checking name:', name)
-                if (!config.exclude.includes(name)) {
-                    filtered.push(result)
+                if (config.exclude.includes(name)) {
+                    console.log('Excluding:', name)
+                    continue
                 }
+                filtered.push(result)
             }
             console.log('-----------')
             console.log(filtered)
             console.log('-----------')
             update = filtered.join('\n')
-
-            // update = !npmUpdate.trim().startsWith('up to date')
-            //     ? npmUpdate.substring(0, npmUpdate.lastIndexOf(' in'))
-            //     : ''
-            // console.log('-----------')
-            // console.log(update)
-            // console.log('-----------')
-            // console.log(JSON.stringify(update))
-            // console.log('-----------')
             core.endGroup() // npm update --dry-run
         }
 
