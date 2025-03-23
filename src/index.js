@@ -55,7 +55,7 @@ const maps = {
             /** @type {{current: string, wanted: string, latest: string, dependent: string, location: string}} **/
             outdated = JSON.parse(npmOutdated)
             for (const name of config.exclude) {
-                console.log('deleting excluded:', name)
+                console.log('deleting exclude:', name)
                 delete outdated[name]
             }
             core.startGroup('Outdated Object')
@@ -66,7 +66,13 @@ const maps = {
         let ncu = ''
         if (!ci && config.ncu) {
             core.startGroup('Running: npx npm-check-updates')
-            const npxNcu = await checkOutput('npx', ['npm-check-updates'])
+            const args = ['npm-check-updates']
+            for (const name of config.exclude) {
+                console.log('filtering exclude:', name)
+                args.push('--reject', name)
+            }
+            console.log('args:', args)
+            const npxNcu = await checkOutput('npx', args)
             ncu = npxNcu.split('\n').slice(2, -2).join('\n')
             console.log('-----------')
             console.log(ncu)
