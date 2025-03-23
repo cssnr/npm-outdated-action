@@ -84,14 +84,40 @@ const maps = {
         if (!ci && config.update) {
             core.startGroup('Running: npm update --dry-run')
             const npmUpdate = await checkOutput('npm', ['update', '--dry-run'])
-            update = !npmUpdate.trim().startsWith('up to date')
-                ? npmUpdate.substring(0, npmUpdate.lastIndexOf(' in'))
-                : ''
+            const results = []
+            for (let line of npmUpdate.trim().split('\n')) {
+                line = line.trim()
+                // console.log('line:', line)
+                if (!line || line.startsWith('up to date')) {
+                    break
+                }
+                results.push(line)
+            }
             console.log('-----------')
-            console.log(update)
+            console.log(results)
             console.log('-----------')
-            console.log(JSON.stringify(update))
+
+            const filtered = []
+            for (const result of results) {
+                const name = result.split(' ')[1]
+                console.log('checking name:', name)
+                if (!config.exclude.includes(name)) {
+                    filtered.push(result)
+                }
+            }
             console.log('-----------')
+            console.log(filtered)
+            console.log('-----------')
+            update = filtered.join('\n')
+
+            // update = !npmUpdate.trim().startsWith('up to date')
+            //     ? npmUpdate.substring(0, npmUpdate.lastIndexOf(' in'))
+            //     : ''
+            // console.log('-----------')
+            // console.log(update)
+            // console.log('-----------')
+            // console.log(JSON.stringify(update))
+            // console.log('-----------')
             core.endGroup() // npm update --dry-run
         }
 

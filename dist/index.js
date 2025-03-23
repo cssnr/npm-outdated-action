@@ -32407,15 +32407,25 @@ const maps = {
 
             /** @type {{current: string, wanted: string, latest: string, dependent: string, location: string}} **/
             outdated = JSON.parse(npmOutdated)
+            for (const name of config.exclude) {
+                console.log('deleting exclude:', name)
+                delete outdated[name]
+            }
             core.startGroup('Outdated Object')
             console.log(outdated)
             core.endGroup() // Outdated Object
         }
 
         let ncu = ''
-        if (!ci) {
+        if (!ci && config.ncu) {
             core.startGroup('Running: npx npm-check-updates')
-            const npxNcu = await checkOutput('npx', ['npm-check-updates'])
+            const args = ['npm-check-updates']
+            for (const name of config.exclude) {
+                console.log('filtering exclude:', name)
+                args.push('--reject', name)
+            }
+            console.log('args:', args)
+            const npxNcu = await checkOutput('npx', args)
             ncu = npxNcu.split('\n').slice(2, -2).join('\n')
             console.log('-----------')
             console.log(ncu)
@@ -32424,17 +32434,43 @@ const maps = {
         }
 
         let update = ''
-        if (!ci) {
+        if (!ci && config.update) {
             core.startGroup('Running: npm update --dry-run')
             const npmUpdate = await checkOutput('npm', ['update', '--dry-run'])
-            update = !npmUpdate.trim().startsWith('up to date')
-                ? npmUpdate.substring(0, npmUpdate.lastIndexOf(' in'))
-                : ''
+            const results = []
+            for (let line of npmUpdate.trim().split('\n')) {
+                line = line.trim()
+                // console.log('line:', line)
+                if (!line || line.startsWith('up to date')) {
+                    break
+                }
+                results.push(line)
+            }
             console.log('-----------')
-            console.log(update)
+            console.log(results)
             console.log('-----------')
-            console.log(JSON.stringify(update))
+
+            const filtered = []
+            for (const result of results) {
+                const name = result.split(' ')[1]
+                console.log('checking name:', name)
+                if (!config.exclude.includes(name)) {
+                    filtered.push(result)
+                }
+            }
             console.log('-----------')
+            console.log(filtered)
+            console.log('-----------')
+            update = filtered.join('\n')
+
+            // update = !npmUpdate.trim().startsWith('up to date')
+            //     ? npmUpdate.substring(0, npmUpdate.lastIndexOf(' in'))
+            //     : ''
+            // console.log('-----------')
+            // console.log(update)
+            // console.log('-----------')
+            // console.log(JSON.stringify(update))
+            // console.log('-----------')
             core.endGroup() // npm update --dry-run
         }
 
@@ -32718,6 +32754,7 @@ async function addSummary(config, markdown, comment) {
  * @property {Boolean} open
  * @property {Boolean} ncu
  * @property {Boolean} update
+ * @property {String[]} exclude
  * @property {Boolean} fail
  * @property {Boolean} link
  * @property {String} token
@@ -32732,6 +32769,7 @@ function getConfig() {
         ncu: core.getBooleanInput('ncu'),
         update: core.getBooleanInput('update'),
         link: core.getBooleanInput('link'),
+        exclude: core.getInput('exclude').split(','),
         fail: core.getBooleanInput('fail'),
         summary: core.getBooleanInput('summary'),
         token: core.getInput('token', { required: true }),
