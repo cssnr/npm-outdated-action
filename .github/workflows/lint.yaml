@@ -1,5 +1,7 @@
 name: "Lint"
 
+# NOTE: This job process the PR so there is no pull.yaml (until something else is added).
+
 on:
   workflow_dispatch:
   pull_request:
@@ -75,6 +77,5 @@ jobs:
         uses: cssnr/check-build-action@v1
 
       - name: "ESLint Annotate"
-        if: ${{ !cancelled() && steps.eslint.outcome != 'success' }}
-        continue-on-error: true
+        if: ${{ failure() && steps.eslint.outcome != 'success' }}
         uses: ataylorme/eslint-annotate-action@v3
