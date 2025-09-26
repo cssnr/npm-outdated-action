@@ -72,7 +72,7 @@ jobs:
 
       - name: "Check Build Action"
         if: ${{ !cancelled() }}
-        uses: cssnr/check-build-action@master
+        uses: cssnr/check-build-action@v1
 
       - name: "ESLint Annotate"
         if: ${{ !cancelled() && steps.eslint.outcome != 'success' }}
