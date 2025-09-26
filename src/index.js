@@ -129,14 +129,7 @@ const maps = {
             !!(config.update && update)
         console.log('hasOutdated:', hasOutdated)
 
-        const markdown = genMarkdown(
-            config,
-            hasOutdated,
-            ci,
-            table,
-            ncu,
-            update
-        )
+        const markdown = genMarkdown(config, hasOutdated, ci, table, ncu, update)
         core.startGroup('Markdown String')
         console.log(markdown)
         core.endGroup() // Markdown String
