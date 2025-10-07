@@ -8,46 +8,35 @@ branding:
 inputs:
   columns:
     description: "Customize Table Columns"
-    required: false
     default: "n,c,w,l"
   latest:
     description: "Report if Latest > Wanted"
-    required: false
     default: "true"
   heading:
     description: "Comment Heading"
-    required: false
     default: "### NPM Outdated Check"
   open:
     description: "Details Open by Default"
-    required: false
     default: "true"
   ncu:
     description: "Show npm-check-updates Output"
-    required: false
     default: "true"
   update:
     description: "Show npm update --dry-run Output"
-    required: false
     default: "true"
   link:
     description: "Use Link for Names"
-    required: false
     default: "true"
   exclude:
     description: "CSV of Package Names to Exclude"
-    required: false
   fail:
     description: "Fail Job if Updates are Found"
-    required: false
     default: "false"
   summary:
     description: "Add Summary to Job"
-    required: false
     default: "true"
   token:
     description: "GitHub Token"
-    required: false
     default: ${{ github.token }}
 
 outputs:
