@@ -42,7 +42,8 @@ const maps = {
         console.log('-----------')
         core.endGroup() // npm install
 
-        let outdated = ''
+        /** @type {{current: string, wanted: string, latest: string, dependent: string, location: string}} **/
+        let outdated = {}
         if (!ci) {
             core.startGroup('Running: npm outdated')
             const npmOutdated = await checkOutput('npm', ['outdated', '--json'])
@@ -52,10 +53,9 @@ const maps = {
             console.log(npmOutdated)
             core.endGroup() // Outdated JSON
 
-            /** @type {{current: string, wanted: string, latest: string, dependent: string, location: string}} **/
             outdated = JSON.parse(npmOutdated)
             for (const name of config.exclude) {
-                if (name in outdated) {
+                if (outdated && typeof outdated === 'object' && name in outdated) {
                     console.log('Excluding:', name)
                     delete outdated[name]
                 }
@@ -136,8 +136,9 @@ const maps = {
 
         console.log('comments:', github.context.payload.pull_request?.comments)
         let comment
+        const events = ['pull_request', 'pull_request_target']
         if (
-            github.context.eventName === 'pull_request' &&
+            events.includes(github.context.eventName) &&
             (github.context.payload.pull_request?.comments || hasOutdated)
         ) {
             core.startGroup(`Processing PR: ${github.context.payload.number}`)
