@@ -1,5 +1,7 @@
 name: "Test"
 
+# actions-up-ignore-file
+
 on:
   workflow_dispatch:
   schedule:
@@ -12,15 +14,15 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-permissions:
-  pull-requests: write
-
 jobs:
   test:
     name: "Test"
     runs-on: ubuntu-latest
     timeout-minutes: 5
     #if: ${{ !contains(github.event.head_commit.message, '#notest') }}
+
+    permissions:
+      pull-requests: write
 
     steps:
       - name: "Checkout"

@@ -18,8 +18,8 @@ class Pull {
     /**
      * Get Comment by startsWith
      * TODO: Process additional pages, max per_page is 100
-     * @param {String} start
-     * @return {Promise<Object|undefined>}
+     * @param {string} start
+     * @return {Promise<object|undefined>}
      */
     async getComment(start) {
         if (this.pull_request.comments && start) {
