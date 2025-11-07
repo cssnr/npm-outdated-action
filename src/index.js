@@ -16,178 +16,184 @@ const maps = {
     p: { align: 'l', col: 'Location' },
 }
 
-;(async () => {
-    try {
-        core.info(`🏳️ Starting NPM Outdated Check`)
+async function main() /* NOSONAR */ {
+    core.info(`🏳️ Starting NPM Outdated Check`)
 
-        // Debug
-        core.startGroup('Debug: github.context')
-        console.log(github.context)
-        core.endGroup() // Debug github.context
-        core.startGroup('Debug: process.env')
-        console.log(process.env)
-        core.endGroup() // Debug process.env
+    // Debug
+    core.startGroup('Debug: github.context')
+    console.log(github.context)
+    core.endGroup() // Debug github.context
+    core.startGroup('Debug: process.env')
+    console.log(process.env)
+    core.endGroup() // Debug process.env
 
-        // Get Config
-        const config = getConfig()
-        core.startGroup('Get Config')
-        console.log(config)
-        core.endGroup() // Config
-
-        core.startGroup('Running: npm ci')
-        const results = await checkOutput('npm', ['ci'], true)
-        const ci = results.length > 1 ? results[1] : ''
-        console.log('-----------')
-        console.log(ci)
-        console.log('-----------')
-        core.endGroup() // npm install
-
-        /** @type {{current: string, wanted: string, latest: string, dependent: string, location: string}} **/
-        let outdated = {}
-        if (!ci) {
-            core.startGroup('Running: npm outdated')
-            const npmOutdated = await checkOutput('npm', ['outdated', '--json'])
-            core.endGroup() // npm outdated
-
-            core.startGroup('Outdated JSON')
-            console.log(npmOutdated)
-            core.endGroup() // Outdated JSON
-
-            outdated = JSON.parse(npmOutdated)
-            for (const name of config.exclude) {
-                if (outdated && typeof outdated === 'object' && name in outdated) {
-                    console.log('Excluding:', name)
-                    delete outdated[name]
-                }
-            }
-            core.startGroup('Outdated Object')
-            console.log(outdated)
-            core.endGroup() // Outdated Object
-        }
-
-        let ncu = ''
-        if (!ci && config.ncu) {
-            core.startGroup('Running: npx npm-check-updates')
-            const args = ['npm-check-updates']
-            for (const name of config.exclude) {
-                console.log('Excluding:', name)
-                args.push('--reject', name)
-            }
-            console.log('args:', args)
-            const npxNcu = await checkOutput('npx', args)
-            ncu = npxNcu.split('\n').slice(2, -2).join('\n')
-            console.log('-----------')
-            console.log(ncu)
-            console.log('-----------')
-            core.endGroup() // npx npm-check-updates
-        }
-
-        let update = ''
-        if (!ci && config.update) {
-            core.startGroup('Running: npm update --dry-run')
-            const npmUpdate = await checkOutput('npm', ['update', '--dry-run'])
-            const results = []
-            for (let line of npmUpdate.trim().split('\n')) {
-                line = line.trim()
-                // console.log('line:', line)
-                if (!line || line.startsWith('up to date')) {
-                    break
-                }
-                results.push(line)
-            }
-            console.log('-----------')
-            console.log(results)
-            console.log('-----------')
-
-            const filtered = []
-            for (const result of results) {
-                const name = result.split(' ')[1]
-                if (config.exclude.includes(name)) {
-                    console.log('Excluding:', name)
-                    continue
-                }
-                filtered.push(result)
-            }
-            console.log('-----------')
-            console.log(filtered)
-            console.log('-----------')
-            update = filtered.join('\n')
-            core.endGroup() // npm update --dry-run
-        }
-
-        core.startGroup('Generate Table')
-        const table = genTable(config, outdated)
-        core.endGroup() // Generate Table
-        core.startGroup('Table Outdated')
-        console.log(table)
-        core.endGroup() // Table Outdated
-
-        const hasOutdated =
-            ci ||
-            !!Object.entries(outdated).length ||
-            !!(config.ncu && ncu) ||
-            !!(config.update && update)
-        console.log('hasOutdated:', hasOutdated)
-
-        const markdown = genMarkdown(config, hasOutdated, ci, table, ncu, update)
-        core.startGroup('Markdown String')
-        console.log(markdown)
-        core.endGroup() // Markdown String
-
-        console.log('comments:', github.context.payload.pull_request?.comments)
-        let comment
-        const events = ['pull_request', 'pull_request_target']
-        if (
-            events.includes(github.context.eventName) &&
-            (github.context.payload.pull_request?.comments || hasOutdated)
-        ) {
-            core.startGroup(`Processing PR: ${github.context.payload.number}`)
-            comment = await updatePull(config, markdown, hasOutdated)
-            console.log('Complete.')
-            core.endGroup() // Processing PR
-        } else {
-            console.log('Not PR AND (No Comments OR Outdated Packages)')
-        }
-
-        // Outputs
-        core.info('📩 Setting Outputs')
-        core.setOutput('outdated', JSON.stringify(outdated))
-        core.setOutput('ncu', ncu)
-        core.setOutput('update', update)
-        core.setOutput('markdown', markdown)
-
-        // Summary
-        if (config.summary) {
-            core.info('📝 Writing Job Summary')
-            try {
-                await addSummary(config, markdown, comment)
-            } catch (e) {
-                console.log(e)
-                core.error(`Error writing Job Summary ${e.message}`)
-            }
-        }
-
-        if (config.fail && hasOutdated) {
-            core.info(`⛔ \u001b[31;1mUpdates Found`)
-            core.setFailed('Updates found and fail is set to true.')
-        } else {
-            core.info(`✅ \u001b[32;1mFinished Success`)
-        }
-    } catch (e) {
-        core.debug(e)
-        core.info(e.message)
-        core.setFailed(e.message)
+    // Inputs
+    const inputs = {
+        columns: core.getInput('columns', { required: true }).split(','),
+        latest: core.getBooleanInput('latest'),
+        heading: core.getInput('heading'),
+        open: core.getBooleanInput('open'),
+        ncu: core.getBooleanInput('ncu'),
+        update: core.getBooleanInput('update'),
+        link: core.getBooleanInput('link'),
+        exclude: core.getInput('exclude').split(','),
+        fail: core.getBooleanInput('fail'),
+        summary: core.getBooleanInput('summary'),
+        token: core.getInput('token', { required: true }),
     }
-})()
+    core.startGroup('Inputs')
+    console.log(inputs)
+    core.endGroup() // Inputs
+
+    core.startGroup('Running: npm ci')
+    const results = await checkOutput('npm', ['ci'], true)
+    const ci = results.length > 1 ? results[1] : ''
+    console.log('-----------')
+    console.log(ci)
+    console.log('-----------')
+    core.endGroup() // npm install
+
+    /** @type {{current: string, wanted: string, latest: string, dependent: string, location: string}} **/
+    let outdated = {}
+    if (!ci) {
+        core.startGroup('Running: npm outdated')
+        const npmOutdated = await checkOutput('npm', ['outdated', '--json'])
+        core.endGroup() // npm outdated
+
+        core.startGroup('Outdated JSON')
+        console.log(npmOutdated)
+        core.endGroup() // Outdated JSON
+
+        outdated = JSON.parse(npmOutdated)
+        for (const name of inputs.exclude) {
+            if (outdated && typeof outdated === 'object' && name in outdated) {
+                console.log('Excluding:', name)
+                delete outdated[name]
+            }
+        }
+        core.startGroup('Outdated Object')
+        console.log(outdated)
+        core.endGroup() // Outdated Object
+    }
+
+    let ncu = ''
+    if (!ci && inputs.ncu) {
+        core.startGroup('Running: npx npm-check-updates')
+        const args = ['npm-check-updates']
+        for (const name of inputs.exclude) {
+            console.log('Excluding:', name)
+            args.push('--reject', name)
+        }
+        console.log('args:', args)
+        const npxNcu = await checkOutput('npx', args)
+        ncu = npxNcu.split('\n').slice(2, -2).join('\n')
+        console.log('-----------')
+        console.log(ncu)
+        console.log('-----------')
+        core.endGroup() // npx npm-check-updates
+    }
+
+    let update = ''
+    if (!ci && inputs.update) {
+        core.startGroup('Running: npm update --dry-run')
+        const npmUpdate = await checkOutput('npm', ['update', '--dry-run'])
+        const results = []
+        for (let rawLine of npmUpdate.trim().split('\n')) {
+            const line = rawLine.trim()
+            // console.log('line:', line)
+            if (!line || line.startsWith('up to date')) {
+                break
+            }
+            results.push(line)
+        }
+        console.log('-----------')
+        console.log(results)
+        console.log('-----------')
+
+        const filtered = []
+        for (const result of results) {
+            const name = result.split(' ')[1]
+            if (inputs.exclude.includes(name)) {
+                console.log('Excluding:', name)
+                continue
+            }
+            filtered.push(result)
+        }
+        console.log('-----------')
+        console.log(filtered)
+        console.log('-----------')
+        update = filtered.join('\n')
+        core.endGroup() // npm update --dry-run
+    }
+
+    core.startGroup('Generate Table')
+    const table = genTable(inputs, outdated)
+    core.endGroup() // Generate Table
+    core.startGroup('Table Outdated')
+    console.log(table)
+    core.endGroup() // Table Outdated
+
+    const hasOutdated =
+        ci ||
+        !!Object.entries(outdated).length ||
+        !!(inputs.ncu && ncu) ||
+        !!(inputs.update && update)
+    console.log('hasOutdated:', hasOutdated)
+
+    const markdown = genMarkdown(inputs, hasOutdated, ci, table, ncu, update)
+    core.startGroup('Markdown String')
+    console.log(markdown)
+    core.endGroup() // Markdown String
+
+    console.log('comments:', github.context.payload.pull_request?.comments)
+    let comment
+    const events = ['pull_request', 'pull_request_target']
+    if (
+        events.includes(github.context.eventName) &&
+        (github.context.payload.pull_request?.comments || hasOutdated)
+    ) {
+        core.startGroup(`Processing PR: ${github.context.payload.number}`)
+        comment = await updatePull(inputs, markdown, hasOutdated)
+        console.log('Complete.')
+        core.endGroup() // Processing PR
+    } else {
+        console.log('Not PR AND (No Comments OR Outdated Packages)')
+    }
+
+    // Outputs
+    core.info('📩 Setting Outputs')
+    core.setOutput('outdated', JSON.stringify(outdated))
+    core.setOutput('ncu', ncu)
+    core.setOutput('update', update)
+    core.setOutput('markdown', markdown)
+
+    // Summary
+    if (inputs.summary) {
+        core.info('📝 Writing Job Summary')
+        try {
+            await addSummary(inputs, markdown, comment)
+        } catch (e) {
+            console.log(e)
+            core.error(`Error writing Job Summary ${e.message}`)
+        }
+    }
+
+    if (inputs.fail && hasOutdated) {
+        core.info(`⛔ \u001b[31;1mUpdates Found`)
+        core.setFailed('Updates found and fail is set to true.')
+    } else {
+        core.info(`✅ \u001b[32;1mFinished Success`)
+    }
+}
 
 /**
  * Update PR
- * @param {Config} config
- * @param {String} markdown
- * @param {Boolean} changes
- * @return {Promise<Object|undefined>}
+ * @param {object} inputs
+ * @param {string} markdown
+ * @param {boolean} changes
+ * @return {Promise<object|undefined>}
  */
-async function updatePull(config, markdown, changes) {
+async function updatePull(inputs, markdown, changes) {
     if (!github.context.payload.pull_request?.number) {
         throw new Error('Unable to determine the Pull Request number!')
     }
@@ -196,7 +202,7 @@ async function updatePull(config, markdown, changes) {
     const id = `<!-- npm-outdated-action ${newHex} -->`
     const body = `${id}\n${markdown}`
 
-    const pull = new Pull(github.context, config.token)
+    const pull = new Pull(github.context, inputs.token)
 
     // Step 1 - Check for Current Comment
     let comment = await pull.getComment('<!-- npm-outdated-action')
@@ -237,10 +243,10 @@ async function updatePull(config, markdown, changes) {
 
 /**
  * Check Command Output
- * @param {String} commandLine
- * @param {String[]} [args]
- * @param {Boolean} [error]
- * @return {Promise<String|String[]>}
+ * @param {string} commandLine
+ * @param {string[]} [args]
+ * @param {boolean} [error]
+ * @return {Promise<string|string[]>}
  */
 async function checkOutput(commandLine, args = [], error = false) {
     // options = { ...{ ignoreReturnCode: true }, ...options }
@@ -248,6 +254,7 @@ async function checkOutput(commandLine, args = [], error = false) {
     const options = { ignoreReturnCode: true }
     let myOutput = ''
     let myError = ''
+    // noinspection JSUnusedGlobalSymbols
     options.listeners = {
         stdout: (data) => {
             myOutput += data.toString()
@@ -267,17 +274,17 @@ async function checkOutput(commandLine, args = [], error = false) {
 
 /**
  * Generate Markdown
- * @param {Config} config
- * @param {Boolean} changes
- * @param {String} ci
- * @param {Array[]} data
- * @param {String} ncu
- * @param {String} update
- * @return {String}
+ * @param {object} inputs
+ * @param {boolean} changes
+ * @param {string} ci
+ * @param {array[]} data
+ * @param {string} ncu
+ * @param {string} update
+ * @return {string}
  */
-function genMarkdown(config, changes, ci, data, ncu, update) {
-    const open = config.open ? ' open' : ''
-    let result = `${config.heading}\n\n`
+function genMarkdown(inputs, changes, ci, data, ncu, update) {
+    const open = inputs.open ? ' open' : ''
+    let result = `${inputs.heading}\n\n`
 
     if (!changes) {
         result += '✅ All packages are up-to-date.\n\n'
@@ -289,8 +296,8 @@ function genMarkdown(config, changes, ci, data, ncu, update) {
 
     if (data.length) {
         const [cols, align] = [[], []]
-        config.columns.forEach((c) => cols.push(maps[c].col))
-        config.columns.forEach((c) => align.push(maps[c].align))
+        inputs.columns.forEach((c) => cols.push(maps[c].col))
+        inputs.columns.forEach((c) => align.push(maps[c].align))
         console.log('cols, align:', cols, align)
 
         const table = markdownTable([cols, ...data], { align })
@@ -298,11 +305,11 @@ function genMarkdown(config, changes, ci, data, ncu, update) {
         result += `<details${open}><summary>npm outdated</summary>\n\n${table}\n\n</details>\n\n`
     }
 
-    if (config.ncu && ncu) {
+    if (inputs.ncu && ncu) {
         result += `<details${open}><summary>npm-check-updates</summary>\n\n\`\`\`text\n${ncu}\n\`\`\`\n\n</details>\n\n`
     }
 
-    if (config.update && update) {
+    if (inputs.update && update) {
         result += `<details${open}><summary>npm update --dry-run</summary>\n\n\`\`\`text\n${update}\n\`\`\`\n\n</details>\n\n`
     }
 
@@ -311,22 +318,22 @@ function genMarkdown(config, changes, ci, data, ncu, update) {
 
 /**
  * Generate Table Array
- * @param {Config} config
- * @param {Object} outdated
+ * @param {object} inputs
+ * @param {object} outdated
  * @return {*[]}
  */
-function genTable(config, outdated) {
+function genTable(inputs, outdated) {
     // TODO: Ensure order of returned data
     const results = []
     for (const [name, data] of Object.entries(outdated)) {
         // console.log(name, data)
-        if (!config.latest && data.wanted !== data.latest) {
+        if (!inputs.latest && data.wanted !== data.latest) {
             core.notice(`Skipping outdated package "${name}" on latest: false`)
             continue
         }
         // TODO: Add option to show latest version if same as wanted
         const latest = data.wanted !== data.latest ? data.latest : '-'
-        const packageName = config.link
+        const packageName = inputs.link
             ? `[${name}](https://www.npmjs.com/package/${name})`
             : name
         const pkg = {
@@ -339,7 +346,7 @@ function genTable(config, outdated) {
         }
         // console.log('pkg:', pkg)
         const result = []
-        config.columns.forEach((k) => result.push(pkg[k]))
+        inputs.columns.forEach((k) => result.push(pkg[k]))
         results.push(result)
     }
     return results
@@ -347,12 +354,12 @@ function genTable(config, outdated) {
 
 /**
  * Add Summary
- * @param {Config} config
- * @param {String} markdown
- * @param {Object} comment
+ * @param {object} inputs
+ * @param {string} markdown
+ * @param {object} comment
  * @return {Promise<void>}
  */
-async function addSummary(config, markdown, comment) {
+async function addSummary(inputs, markdown, comment) {
     core.summary.addRaw('## NPM Outdated Action\n\n')
     if (comment) {
         const url = `https://github.com/${github.context.repo.owner}/${github.context.repo.repo}/pull/${github.context.payload.number}#issuecomment-${comment.id}`
@@ -365,11 +372,11 @@ async function addSummary(config, markdown, comment) {
 
     core.summary.addRaw(`---\n\n${markdown}\n\n---\n\n`)
 
-    delete config.token
-    const yaml = Object.entries(config)
+    delete inputs.token
+    const yaml = Object.entries(inputs)
         .map(([k, v]) => `${k}: ${JSON.stringify(v)}`)
         .join('\n')
-    core.summary.addRaw('<details><summary>Config</summary>')
+    core.summary.addRaw('<details><summary>Inputs</summary>')
     core.summary.addCodeBlock(yaml, 'yaml')
     core.summary.addRaw('</details>\n')
 
@@ -379,34 +386,8 @@ async function addSummary(config, markdown, comment) {
     await core.summary.write()
 }
 
-/**
- * Get Config
- * @typedef {Object} Config
- * @property {String[]} columns
- * @property {Boolean} latest
- * @property {String} heading
- * @property {Boolean} summary
- * @property {Boolean} open
- * @property {Boolean} ncu
- * @property {Boolean} update
- * @property {String[]} exclude
- * @property {Boolean} fail
- * @property {Boolean} link
- * @property {String} token
- * @return {Config}
- */
-function getConfig() {
-    return {
-        columns: core.getInput('columns', { required: true }).split(','),
-        latest: core.getBooleanInput('latest'),
-        heading: core.getInput('heading'),
-        open: core.getBooleanInput('open'),
-        ncu: core.getBooleanInput('ncu'),
-        update: core.getBooleanInput('update'),
-        link: core.getBooleanInput('link'),
-        exclude: core.getInput('exclude').split(','),
-        fail: core.getBooleanInput('fail'),
-        summary: core.getBooleanInput('summary'),
-        token: core.getInput('token', { required: true }),
-    }
-}
+main().catch((e) => {
+    core.debug(e)
+    core.info(e.message)
+    core.setFailed(e.message)
+})
