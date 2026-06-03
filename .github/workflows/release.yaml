@@ -93,6 +93,7 @@ jobs:
         uses: cssnr/update-version-tags-action@v2
         with:
           tag: ${{ env.tag }}
+          tags: "latest"
 
       - name: "Update Release Notes"
         continue-on-error: true
