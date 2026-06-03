@@ -51,7 +51,7 @@ Check out the [Comment Examples](#Comment-Examples) to see more.
 > Please [request any features](https://github.com/cssnr/npm-outdated-action/discussions/categories/feature-requests)
 > you would like to see and [report any issues](https://github.com/cssnr/npm-outdated-action/issues) you find.
 
-> [!IMPORTANT]  
+> [!WARNING]  
 > This action no longer works on the `master` branch.  
 > I am also sunsetting the `latest` tag (for now).  
 > If you need a rolling tag use the [@release](https://github.com/cssnr/npm-outdated-action/tree/release) branch.
