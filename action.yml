@@ -1,6 +1,8 @@
+# https://www.schemastore.org/github-action.json
 name: "NPM Outdated Check"
 description: "Runs npm outdated, node-check-updates, and update --dry-run, and adds a customizable comment to the Pull Request with output."
 author: "Shane"
+
 branding:
   icon: "type"
   color: "green"

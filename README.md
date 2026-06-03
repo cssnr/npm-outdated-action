@@ -1,26 +1,32 @@
 [![GitHub Tag Major](https://img.shields.io/github/v/tag/cssnr/npm-outdated-action?sort=semver&filter=!v*.*&logo=git&logoColor=white&labelColor=585858&label=%20)](https://github.com/cssnr/npm-outdated-action/tags)
 [![GitHub Tag Minor](https://img.shields.io/github/v/tag/cssnr/npm-outdated-action?sort=semver&filter=!v*.*.*&logo=git&logoColor=white&labelColor=585858&label=%20)](https://github.com/cssnr/npm-outdated-action/releases)
 [![GitHub Release Version](https://img.shields.io/github/v/release/cssnr/npm-outdated-action?logo=git&logoColor=white&labelColor=585858&label=%20)](https://github.com/cssnr/npm-outdated-action/releases/latest)
-[![GitHub Dist Size](https://img.shields.io/github/size/cssnr/npm-outdated-action/dist%2Findex.js?logo=bookstack&logoColor=white&label=dist%20size)](https://github.com/cssnr/npm-outdated-action/blob/master/src)
-[![Action Run Using](https://img.shields.io/badge/dynamic/yaml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fcssnr%2Fnpm-outdated-action%2Frefs%2Fheads%2Fmaster%2Faction.yml&query=%24.runs.using&logo=githubactions&logoColor=white&label=runs)](https://github.com/cssnr/npm-outdated-action/blob/master/action.yml)
-[![Workflow Release](https://img.shields.io/github/actions/workflow/status/cssnr/npm-outdated-action/release.yaml?logo=cachet&label=release)](https://github.com/cssnr/npm-outdated-action/actions/workflows/release.yaml)
-[![Workflow Test](https://img.shields.io/github/actions/workflow/status/cssnr/npm-outdated-action/test.yaml?logo=cachet&label=test)](https://github.com/cssnr/npm-outdated-action/actions/workflows/test.yaml)
-[![Workflow lint](https://img.shields.io/github/actions/workflow/status/cssnr/npm-outdated-action/lint.yaml?logo=cachet&label=lint)](https://github.com/cssnr/npm-outdated-action/actions/workflows/lint.yaml)
+[![GitHub Dist Size](https://img.shields.io/github/size/cssnr/npm-outdated-action/dist%2Findex.js?branch=release&logo=bookstack&logoColor=white&label=dist)](https://github.com/cssnr/npm-outdated-action/tree/release)
+[![Action Run Using](https://img.shields.io/badge/dynamic/yaml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fcssnr%2Fnpm-outdated-action%2Frefs%2Fheads%2Fmaster%2Faction.yml&query=%24.runs.using&logo=githubactions&logoColor=white&label=runs)](https://github.com/cssnr/actionlint-action/blob/master/action.yml)
+[![Workflow Release](https://img.shields.io/github/actions/workflow/status/cssnr/npm-outdated-action/release.yaml?logo=norton&logoColor=white&label=release)](https://github.com/cssnr/npm-outdated-action/actions/workflows/release.yaml)
+[![Workflow Lint](https://img.shields.io/github/actions/workflow/status/cssnr/npm-outdated-action/lint.yaml?logo=norton&logoColor=white&label=lint)](https://github.com/cssnr/npm-outdated-action/actions/workflows/lint.yaml)
+[![Workflow Test](https://img.shields.io/github/actions/workflow/status/cssnr/npm-outdated-action/test.yaml?logo=norton&logoColor=white&label=test)](https://github.com/cssnr/npm-outdated-action/actions/workflows/test.yaml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=cssnr_npm-outdated-action&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=cssnr_npm-outdated-action)
-[![GitHub Last Commit](https://img.shields.io/github/last-commit/cssnr/npm-outdated-action?logo=github&label=updated)](https://github.com/cssnr/npm-outdated-action/pulse)
+[![GitHub Last Commit](https://img.shields.io/github/last-commit/cssnr/npm-outdated-action?logo=github&label=updated)](https://github.com/cssnr/npm-outdated-action)
 [![Codeberg Last Commit](https://img.shields.io/gitea/last-commit/cssnr/npm-outdated-action/master?gitea_url=https%3A%2F%2Fcodeberg.org%2F&logo=codeberg&logoColor=white&label=updated)](https://codeberg.org/cssnr/npm-outdated-action)
-[![GitHub Contributors](https://img.shields.io/github/contributors-anon/cssnr/npm-outdated-action?logo=github)](https://github.com/cssnr/npm-outdated-action/graphs/contributors)
-[![GitHub Repo Size](https://img.shields.io/github/repo-size/cssnr/npm-outdated-action?logo=bookstack&logoColor=white&label=repo%20size)](https://github.com/cssnr/npm-outdated-action?tab=readme-ov-file#readme)
-[![GitHub Top Language](https://img.shields.io/github/languages/top/cssnr/npm-outdated-action?logo=htmx)](https://github.com/cssnr/npm-outdated-action)
-[![GitHub Forks](https://img.shields.io/github/forks/cssnr/npm-outdated-action?style=flat&logo=github)](https://github.com/cssnr/npm-outdated-action/forks)
-[![GitHub Discussions](https://img.shields.io/github/discussions/cssnr/npm-outdated-action?logo=github)](https://github.com/cssnr/npm-outdated-action/discussions)
-[![GitHub Repo Stars](https://img.shields.io/github/stars/cssnr/npm-outdated-action?style=flat&logo=github)](https://github.com/cssnr/npm-outdated-action/stargazers)
-[![GitHub Org Stars](https://img.shields.io/github/stars/cssnr?style=flat&logo=github&label=org%20stars)](https://cssnr.github.io/)
+[![GitHub Repo Size](https://img.shields.io/github/repo-size/cssnr/npm-outdated-action?logo=buffer&label=repo%20size)](https://github.com/cssnr/npm-outdated-action?tab=readme-ov-file#readme)
+[![GitHub Top Language](https://img.shields.io/github/languages/top/cssnr/npm-outdated-action?logo=devbox)](https://github.com/cssnr/npm-outdated-action?tab=readme-ov-file#readme)
+[![GitHub Contributors](https://img.shields.io/github/contributors-anon/cssnr/npm-outdated-action?logo=southwestairlines)](https://github.com/cssnr/npm-outdated-action/graphs/contributors)
+[![GitHub Issues](https://img.shields.io/github/issues/cssnr/npm-outdated-action?logo=codeforces&logoColor=white)](https://github.com/cssnr/npm-outdated-action/issues)
+[![GitHub Discussions](https://img.shields.io/github/discussions/cssnr/npm-outdated-action?logo=livechat&logoColor=white)](https://github.com/cssnr/npm-outdated-action/discussions)
+[![GitHub Forks](https://img.shields.io/github/forks/cssnr/npm-outdated-action?style=flat&logo=forgejo&logoColor=white)](https://github.com/cssnr/npm-outdated-action/forks)
+[![GitHub Repo Stars](https://img.shields.io/github/stars/cssnr/npm-outdated-action?style=flat&logo=gleam&logoColor=white)](https://github.com/cssnr/npm-outdated-action/stargazers)
+[![GitHub Org Stars](https://img.shields.io/github/stars/cssnr?style=flat&logo=apachespark&logoColor=white&label=org%20stars)](https://cssnr.github.io/)
 [![Discord](https://img.shields.io/discord/899171661457293343?logo=discord&logoColor=white&label=discord&color=7289da)](https://discord.gg/wXy6m2X8wY)
 [![Ko-fi](https://img.shields.io/badge/Ko--fi-72a5f2?logo=kofi&label=support)](https://ko-fi.com/cssnr)
 
 # NPM Outdated Check
 
+<a title="NPM Outdated Check" href="https://actions.cssnr.com/" target="_blank">
+<img alt="NPM Outdated Check" align="right" width="128" height="auto" src="https://raw.githubusercontent.com/cssnr/npm-outdated-action/refs/heads/master/.github/assets/logo.svg"></a>
+
+- [Features](#Features)
+  - [Planned](#Planned)
 - [Inputs](#Inputs)
   - [Permissions](#Permissions)
 - [Outputs](#Outputs)
@@ -28,8 +34,6 @@
 - [Comment Examples](#Comment-Examples)
 - [Examples](#Examples)
 - [Tags](#Tags)
-- [Features](#Features)
-  - [Planned](#Planned)
 - [Support](#Support)
 - [Contributing](#Contributing)
 
@@ -46,6 +50,28 @@ Check out the [Comment Examples](#Comment-Examples) to see more.
 > This action is under active development.  
 > Please [request any features](https://github.com/cssnr/npm-outdated-action/discussions/categories/feature-requests)
 > you would like to see and [report any issues](https://github.com/cssnr/npm-outdated-action/issues) you find.
+
+## Features
+
+- Automatically report npm outdated packages on a PR and add a comment.
+- Report wanted and latest with option to only report wanted.
+- Option to exclude packages by name from being reported.
+- Option to customize columns visibility and columns order.
+- Option to display results expanded or collapsed.
+- Option to display `npx npm-check-updates` output.
+- Option to display `npm update --dry-run` output.
+- Outputs outdated, ncu, update, and markdown results.
+
+### Planned
+
+- Custom Column Alignment
+- Custom Column Titles
+- Custom Section Text
+
+Want to show package changes on release notes? Check out: [cssnr/package-changelog-action](https://github.com/cssnr/package-changelog-action?tab=readme-ov-file#readme)  
+Want to automatically updated tags on release? Check out: [cssnr/update-version-tags-action](https://github.com/cssnr/update-version-tags-action?tab=readme-ov-file#readme)
+
+If you would like to see a new feature, please [submit a feature request](https://github.com/cssnr/npm-outdated-action/discussions/categories/feature-requests).
 
 ## Inputs
 
@@ -356,7 +382,7 @@ Note: this only appears if a previous comment is edited and does not show up on 
 <details open><summary>Custom Heading</summary>
 
 ```yaml
-- name: 'Package Changelog Action'
+- name: 'NPM Outdated Check'
   uses: cssnr/npm-outdated-action@master
   continue-on-error: true
   with:
@@ -367,7 +393,7 @@ Note: this only appears if a previous comment is edited and does not show up on 
 <details><summary>Remove Heading</summary>
 
 ```yaml
-- name: 'Package Changelog Action'
+- name: 'NPM Outdated Check'
   uses: cssnr/npm-outdated-action@master
   continue-on-error: true
   with:
@@ -380,7 +406,7 @@ This puts latest before current and adds dependent.
 <details><summary>Fail Status Check if Outdated</summary>
 
 ```yaml
-- name: 'Package Changelog Action'
+- name: 'NPM Outdated Check'
   uses: cssnr/npm-outdated-action@master
   with:
     fail: true
@@ -390,7 +416,7 @@ This puts latest before current and adds dependent.
 <details open><summary>Custom Column Order</summary>
 
 ```yaml
-- name: 'Package Changelog Action'
+- name: 'NPM Outdated Check'
   uses: cssnr/npm-outdated-action@master
   continue-on-error: true
   with:
@@ -403,7 +429,7 @@ This puts latest before current and adds dependent.
 <details><summary>Disable NCU Check</summary>
 
 ```yaml
-- name: 'Package Changelog Action'
+- name: 'NPM Outdated Check'
   uses: cssnr/npm-outdated-action@master
   continue-on-error: true
   with:
@@ -416,7 +442,7 @@ This puts latest before current and adds dependent.
 <details><summary>Disable Update Check</summary>
 
 ```yaml
-- name: 'Package Changelog Action'
+- name: 'NPM Outdated Check'
   uses: cssnr/npm-outdated-action@master
   continue-on-error: true
   with:
@@ -477,42 +503,19 @@ You can view the release notes for each version on the [releases](https://github
 The **Major** tag is recommended. It is the most up-to-date and always backwards compatible.
 Breaking changes would result in a **Major** version bump. At a minimum you should use a **Minor** tag.
 
-## Features
-
-- Automatically report npm outdated packages on a PR and add a comment.
-- Report wanted and latest with option to only report wanted.
-- Option to exclude packages by name from being reported.
-- Option to customize columns visibility and columns order.
-- Option to display results expanded or collapsed.
-- Option to display `npx npm-check-updates` output.
-- Option to display `npm update --dry-run` output.
-- Outputs outdated, ncu, update, and markdown results.
-
-### Planned
-
-- Custom Column Alignment
-- Custom Column Titles
-- Custom Section Text
-
-Want to show package changes on release notes? Check out: [cssnr/package-changelog-action](https://github.com/cssnr/package-changelog-action?tab=readme-ov-file#readme)  
-Want to automatically updated tags on release? Check out: [cssnr/update-version-tags-action](https://github.com/cssnr/update-version-tags-action?tab=readme-ov-file#readme)
-
-If you would like to see a new feature, please [submit a feature request](https://github.com/cssnr/npm-outdated-action/discussions/categories/feature-requests).
-
 # Support
 
-For general help or to request a feature, see:
+If you run into any issues or need help getting started, please do one of the following:
 
-- Q&A Discussion: https://github.com/cssnr/npm-outdated-action/discussions/categories/q-a
-- Request a Feature: https://github.com/cssnr/npm-outdated-action/discussions/categories/feature-requests
+- [Report an Issue](https://github.com/cssnr/npm-outdated-action/issues)
+- [Q&A Discussion](https://github.com/cssnr/npm-outdated-action/discussions/categories/q-a)
+- [Request a Feature](https://github.com/cssnr/npm-outdated-action/issues/new?template=1-feature.yaml)
+- [Chat with us on Discord](https://discord.gg/wXy6m2X8wY)
 
-If you are experiencing an issue/bug or getting unexpected results, you can:
-
-- Report an Issue: https://github.com/cssnr/npm-outdated-action/issues
-- Chat with us on Discord: https://discord.gg/wXy6m2X8wY
-- Provide General Feedback: [https://cssnr.github.io/feedback/](https://cssnr.github.io/feedback/?app=Update%20Release%20Notes)
-
-For more information, see the CSSNR [SUPPORT.md](https://github.com/cssnr/.github/blob/master/.github/SUPPORT.md#support).
+[![Features](https://img.shields.io/badge/features-brightgreen?style=for-the-badge&logo=rocket&logoColor=white)](https://github.com/cssnr/npm-outdated-action/issues/new?template=1-feature.yaml)
+[![Issues](https://img.shields.io/badge/issues-red?style=for-the-badge&logo=southwestairlines&logoColor=white)](https://github.com/cssnr/npm-outdated-action/issues)
+[![Discussions](https://img.shields.io/badge/discussions-blue?style=for-the-badge&logo=livechat&logoColor=white)](https://github.com/cssnr/npm-outdated-action/discussions)
+[![Discord](https://img.shields.io/badge/discord-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/wXy6m2X8wY)
 
 # Contributing
 
@@ -523,16 +526,24 @@ and [additional](https://cssnr.com/) open source projects.
 
 [![Ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/cssnr)
 
-Additionally, you can support other GitHub Actions I have published:
+[![Actions Tools](https://raw.githubusercontent.com/smashedr/repo-images/refs/heads/master/actions/actions-tools.png)](https://actions-tools.cssnr.com/)
+
+Additionally, you can support other [GitHub Actions](https://actions.cssnr.com/) I have published:
 
 - [Stack Deploy Action](https://github.com/cssnr/stack-deploy-action?tab=readme-ov-file#readme)
 - [Portainer Stack Deploy Action](https://github.com/cssnr/portainer-stack-deploy-action?tab=readme-ov-file#readme)
 - [Docker Context Action](https://github.com/cssnr/docker-context-action?tab=readme-ov-file#readme)
+- [AI Issue Action](https://github.com/cssnr/ai-issue-action?tab=readme-ov-file#readme)
 - [Actions Up Action](https://github.com/cssnr/actions-up-action?tab=readme-ov-file#readme)
+- [Webstore Publish Action](https://github.com/cssnr/webstore-publish-action?tab=readme-ov-file#readme)
+- [Rhysd Actionlint Action](https://github.com/cssnr/actionlint-action?tab=readme-ov-file#readme)
+- [Zensical Action](https://github.com/cssnr/zensical-action?tab=readme-ov-file#readme)
 - [VirusTotal Action](https://github.com/cssnr/virustotal-action?tab=readme-ov-file#readme)
+- [Homebrew Action](https://github.com/cssnr/homebrew-action?tab=readme-ov-file#readme)
 - [Mirror Repository Action](https://github.com/cssnr/mirror-repository-action?tab=readme-ov-file#readme)
 - [Update Version Tags Action](https://github.com/cssnr/update-version-tags-action?tab=readme-ov-file#readme)
 - [Docker Tags Action](https://github.com/cssnr/docker-tags-action?tab=readme-ov-file#readme)
+- [TOML Action](https://github.com/cssnr/toml-action?tab=readme-ov-file#readme)
 - [Update JSON Value Action](https://github.com/cssnr/update-json-value-action?tab=readme-ov-file#readme)
 - [JSON Key Value Check Action](https://github.com/cssnr/json-key-value-check-action?tab=readme-ov-file#readme)
 - [Parse Issue Form Action](https://github.com/cssnr/parse-issue-form-action?tab=readme-ov-file#readme)
@@ -542,6 +553,7 @@ Additionally, you can support other GitHub Actions I have published:
 - [NPM Outdated Check Action](https://github.com/cssnr/npm-outdated-action?tab=readme-ov-file#readme)
 - [Label Creator Action](https://github.com/cssnr/label-creator-action?tab=readme-ov-file#readme)
 - [Algolia Crawler Action](https://github.com/cssnr/algolia-crawler-action?tab=readme-ov-file#readme)
+- [Create Pull Action](https://github.com/cssnr/create-pull-action?tab=readme-ov-file#readme)
 - [Upload Release Action](https://github.com/cssnr/upload-release-action?tab=readme-ov-file#readme)
 - [Check Build Action](https://github.com/cssnr/check-build-action?tab=readme-ov-file#readme)
 - [Web Request Action](https://github.com/cssnr/web-request-action?tab=readme-ov-file#readme)
@@ -557,6 +569,7 @@ These actions are not published on the Marketplace, but may be useful.
 - [cssnr/push-artifacts-action](https://github.com/cssnr/push-artifacts-action?tab=readme-ov-file#readme) - Sync files to a remote host with rsync.
 - [smashedr/update-release-notes-action](https://github.com/smashedr/update-release-notes-action?tab=readme-ov-file#readme) - Update release notes.
 - [smashedr/combine-release-notes-action](https://github.com/smashedr/combine-release-notes-action?tab=readme-ov-file#readme) - Combine release notes.
+- [smashedr/openai-translate-action](https://github.com/smashedr/openai-translate-action?tab=readme-ov-file#readme) - OpenAI translate action.
 
 ---
 
@@ -566,10 +579,11 @@ These actions are not published on the Marketplace, but may be useful.
 
 These are basic action templates that I use for creating new actions.
 
-- [js-test-action](https://github.com/smashedr/js-test-action?tab=readme-ov-file#readme) - JavaScript
-- [ts-test-action](https://github.com/smashedr/ts-test-action?tab=readme-ov-file#readme) - TypeScript
-- [py-test-action](https://github.com/smashedr/py-test-action?tab=readme-ov-file#readme) - Python (Dockerfile)
-- [docker-test-action](https://github.com/smashedr/docker-test-action?tab=readme-ov-file#readme) - Docker (Image)
+- [javascript-action](https://github.com/smashedr/javascript-action?tab=readme-ov-file#readme) - JavaScript
+- [typescript-action](https://github.com/smashedr/typescript-action?tab=readme-ov-file#readme) - TypeScript
+- [py-test-action](https://github.com/smashedr/py-test-action?tab=readme-ov-file#readme) - Dockerfile Python
+- [test-action-uv](https://github.com/smashedr/test-action-uv?tab=readme-ov-file#readme) - Dockerfile Python UV
+- [docker-test-action](https://github.com/smashedr/docker-test-action?tab=readme-ov-file#readme) - Docker Image Python
 
 Note: The `docker-test-action` builds, runs and pushes images to [GitHub Container Registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry).
 
@@ -578,3 +592,11 @@ Note: The `docker-test-action` builds, runs and pushes images to [GitHub Contain
 </details>
 
 For a full list of current projects visit: [https://cssnr.github.io/](https://cssnr.github.io/)
+
+<a href="https://github.com/cssnr/npm-outdated-action">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=cssnr/npm-outdated-action&type=date&legend=bottom-right&theme=dark" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=cssnr/npm-outdated-action&type=date&legend=bottom-right" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=cssnr/npm-outdated-action&type=date&legend=bottom-right" />
+ </picture>
+</a>

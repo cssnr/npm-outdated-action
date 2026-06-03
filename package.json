@@ -1,26 +1,33 @@
 {
   "name": "npm-outdated-action",
   "private": true,
+  "type": "module",
   "main": "dist/index.js",
   "scripts": {
-    "build": "ncc build src/index.js",
+    "build": "rollup --config rollup.config.mjs",
     "build:watch": "npm run build -- --watch",
-    "lint": "npx eslint src",
-    "lint:report": "npm run lint -- --output-file eslint_report.json --format json",
-    "prettier:check": "npx prettier --check .",
-    "prettier:write": "npx prettier --write ."
+    "dev": "npm run build:watch",
+    "lint": "eslint src",
+    "prepare": "npm run build",
+    "prettier": "npm run prettier:write",
+    "prettier:check": "prettier --check .",
+    "prettier:write": "prettier --write .",
+    "yamllint": "yamllint -c .github/yamllint.yaml ."
   },
   "dependencies": {
-    "@actions/core": "^1.11.1",
-    "@actions/exec": "^1.1.1",
-    "@actions/github": "^6.0.1",
+    "@actions/core": "^3.0.1",
+    "@actions/exec": "^3.0.0",
+    "@actions/github": "^9.1.1",
     "markdown-table": "^3.0.4",
-    "npm-check-updates": "^19.1.2"
+    "npm-check-updates": "^22.2.2"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.1",
-    "@vercel/ncc": "^0.38.4",
-    "eslint": "^9.39.1",
-    "prettier": "^3.6.2"
+    "@eslint/js": "^10.0.1",
+    "@rollup/plugin-commonjs": "^29.0.3",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^16.0.3",
+    "eslint": "^10.4.1",
+    "prettier": "^3.8.3",
+    "rollup": "^4.61.0"
   }
 }
