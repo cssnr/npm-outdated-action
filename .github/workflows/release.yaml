@@ -77,7 +77,7 @@ jobs:
             dist/
           root_dir: ${{ env.release }}
           fail_on_self_push: false
-          app_id: 146360
+          app_id: ${{ vars.APP_CLIENT_ID }}
           app_private_key: ${{ secrets.APP_PRIVATE_KEY }}
 
       - name: "Update Release Tag"
