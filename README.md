@@ -53,7 +53,7 @@ Check out the [Comment Examples](#Comment-Examples) to see more.
 
 > [!WARNING]  
 > This action no longer works on the `master` branch.  
-> I am also sunsetting the `latest` tag (soon).  
+> The `latest` tag is also being sunset very soon.  
 > If you need a rolling tag use the [@release](https://github.com/cssnr/npm-outdated-action/tree/release) branch.
 
 ## Features

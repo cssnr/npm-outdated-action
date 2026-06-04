@@ -1,10 +1,8 @@
 import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 import * as github from '@actions/github'
-
 import { createHash } from 'crypto'
 import { markdownTable } from 'markdown-table'
-
 import { Pull } from './api.js'
 
 const maps = {
@@ -384,8 +382,10 @@ async function addSummary(inputs, markdown, comment) {
   await core.summary.write()
 }
 
-main().catch((e) => {
+try {
+  await main()
+} catch (e) {
   core.debug(e)
   core.info(e.message)
   core.setFailed(e.message)
-})
+}

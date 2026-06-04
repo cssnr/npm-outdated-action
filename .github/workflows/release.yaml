@@ -8,6 +8,8 @@ env:
   tag: "${{ github.ref_name || github.event.release.tag_name }}"
   source: source # directory name - master/main branch
   release: release # directory and branch name - release branch
+  action: action.yml
+  dist: dist
 
 jobs:
   release:
@@ -52,48 +54,40 @@ jobs:
       - name: "Debug 1"
         continue-on-error: true
         run: |
-          sha256sum "${{ env.source }}/dist/index.js"
-          sha256sum "${{ env.release }}/dist/index.js"
+          sha256sum "${{ env.source }}/${{ env.dist }}/index.js"
+          sha256sum "${{ env.release }}/${{ env.dist }}/index.js"
 
       - name: "Copy Build"
         run: |
-          cp "${{ env.source }}/action.yml" "${{ env.release }}/"
-          rm -rf "${{ env.release }}/dist"
-          cp -r "${{ env.source }}/dist" "${{ env.release }}/dist"
+          cp "${{ env.source }}/${{ env.action }}" "${{ env.release }}/"
+          rm -rf "${{ env.release }}/${{ env.dist }}"
+          cp -r "${{ env.source }}/${{ env.dist }}" "${{ env.release }}/${{ env.dist }}"
 
       - name: "Debug 2"
         continue-on-error: true
         run: |
-          sha256sum "${{ env.source }}/dist/index.js"
-          sha256sum "${{ env.release }}/dist/index.js"
+          sha256sum "${{ env.source }}/${{ env.dist }}/index.js"
+          sha256sum "${{ env.release }}/${{ env.dist }}/index.js"
 
       - name: "Commit and Push"
         uses: suzuki-shunsuke/commit-action@06e3b49d4706498d325d29bd85adc82ecf2f5d8f # v1.0.0
         with:
           commit_message: ${{ env.tag }}
           branch: ${{ env.release }}
-          files: |
-            action.yml
-            dist/
           root_dir: ${{ env.release }}
           fail_on_self_push: false
           app_id: ${{ vars.APP_CLIENT_ID }}
           app_private_key: ${{ secrets.APP_PRIVATE_KEY }}
 
-      - name: "Update Release Tag"
-        working-directory: ${{ env.release }}
-        run: |
-          pwd
-          git fetch origin "${{ env.release }}"
-          git tag -f "${{ env.tag }}" "origin/${{ env.release }}"
-          git push origin "${{ env.tag }}" -f
-
       - name: "Update Version Tags"
         id: tags
         uses: cssnr/update-version-tags-action@v2
         with:
+          ref: refs/heads/${{ env.release }}
           tag: ${{ env.tag }}
           tags: "latest"
+          force: true
+          release: true
 
       - name: "Update Release Notes"
         continue-on-error: true
